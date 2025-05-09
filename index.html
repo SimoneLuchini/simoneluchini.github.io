@@ -20,12 +20,19 @@
             position: relative;
             overflow-x: hidden;
         }
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.5rem 2.5rem 0 2.5rem;
+            box-sizing: border-box;
+        }
         .profile-header {
             display: flex;
             align-items: center;
             gap: 2.2rem;
             margin-bottom: 0.2rem;
-            margin-left: 2.5rem;
+            margin-left: 0;
+            margin-top: 2.5rem;
         }
         .profile-photo {
             width: 170px;
@@ -42,7 +49,7 @@
         }
         .profile-details-row {
             width: 100%;
-            margin-left: 2.5rem;
+            margin-left: 0;
             margin-bottom: 1.2rem;
             display: flex;
             flex-direction: column;
@@ -147,7 +154,8 @@
             max-width: none;
         }
         @media (max-width: 900px) {
-            .profile-header { flex-direction: column; align-items: flex-start; gap: 1.2rem; }
+            .main-container { padding: 1.2rem 0.7rem 0 0.7rem; }
+            .profile-header { flex-direction: column; align-items: flex-start; gap: 1.2rem; margin-top: 1.2rem; }
             .profile-photo { width: 120px; }
             .network-title .name { font-size: 1.7rem; }
             .network-title .surname { font-size: 1.7rem; }
@@ -161,36 +169,38 @@
     </style>
 </head>
 <body>
-    <div class="profile-header">
-        <img src="SimoneLuchini-3.jpg" alt="Simone Luchini" class="profile-photo" />
-        <div class="profile-main">
-            <div class="network-title">
-                <span class="name">Simone <span class="surname">Luchini</span></span>
-                <div class="subtitle">PhD Student</div>
-                <div class="underline"></div>
+    <div class="main-container">
+        <div class="profile-header">
+            <img src="SimoneLuchini-3.jpg" alt="Simone Luchini" class="profile-photo" />
+            <div class="profile-main">
+                <div class="network-title">
+                    <span class="name">Simone <span class="surname">Luchini</span></span>
+                    <div class="subtitle">PhD Student</div>
+                    <div class="underline"></div>
+                </div>
             </div>
         </div>
+        <div class="profile-details-row">
+            <div class="profile-description">
+                Hi, I am Simone. Thank you for visiting my page. I study how the brain generates creative ideas and how neural networks give rise to imagination and innovation. My work is at the intersection of neuroscience, creativity, and artificial intelligence. I am currently a PhD student at <a href="#">[Your University]</a>. When I am not doing science, I enjoy music, hiking, and reading about the mind.
+            </div>
+            <div class="profile-socials">
+                <b>Email</b>: <a href="mailto:simone.luchini@email.com">simone.luchini@email.com</a><br>
+                <b>Scholar</b>: <a href="#">Simone Luchini</a><br>
+                <b>GitHub</b>: <a href="#">simoluchini</a><br>
+                <b>Twitter/X</b>: <a href="#">@SimoneLuchini</a><br>
+                <b>Bluesky</b>: <a href="#">simoluchini.bsky.social</a><br>
+            </div>
+        </div>
+        <section class="hero-section">
+            <div class="hero-text">
+                Learn more about my research.
+            </div>
+            <div class="network-box">
+                <canvas id="network-canvas"></canvas>
+            </div>
+        </section>
     </div>
-    <div class="profile-details-row">
-        <div class="profile-description">
-            Hi, I am Simone. Thank you for visiting my page. I study how the brain generates creative ideas and how neural networks give rise to imagination and innovation. My work is at the intersection of neuroscience, creativity, and artificial intelligence. I am currently a PhD student at <a href="#">[Your University]</a>. When I am not doing science, I enjoy music, hiking, and reading about the mind.
-        </div>
-        <div class="profile-socials">
-            <b>Email</b>: <a href="mailto:simone.luchini@email.com">simone.luchini@email.com</a><br>
-            <b>Scholar</b>: <a href="#">Simone Luchini</a><br>
-            <b>GitHub</b>: <a href="#">simoluchini</a><br>
-            <b>Twitter/X</b>: <a href="#">@SimoneLuchini</a><br>
-            <b>Bluesky</b>: <a href="#">simoluchini.bsky.social</a><br>
-        </div>
-    </div>
-    <section class="hero-section">
-        <div class="hero-text">
-            Learn more about my research.
-        </div>
-        <div class="network-box">
-            <canvas id="network-canvas"></canvas>
-        </div>
-    </section>
     <script>
     // --- Pretty network animation: dots and lines in a box, with collisions ---
     const canvas = document.getElementById('network-canvas');
