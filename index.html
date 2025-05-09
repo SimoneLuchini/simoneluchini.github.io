@@ -258,50 +258,50 @@
         // Scene, camera and renderer configuration
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true, 
+            alpha: true,
+            powerPreference: 'high-performance'
+        });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for better performance
         renderer.setClearColor(0x0a192f, 1);
         networkContainer.appendChild(renderer.domElement);
         
         // Camera position
         camera.position.z = 30;
         
-        // Particles and connections
-        const particlesCount = 150;
-        const maxDistance = 20;
+        // Optimized particles and connections
+        const particlesCount = 80; // Reduced particle count
+        const maxDistance = 15; // Reduced connection distance
         const particles = [];
         
-        // Create particle geometry
-        const particleGeometry = new THREE.SphereGeometry(0.2, 8, 8);
-        const particleMaterial = new THREE.MeshBasicMaterial({ color: 0x64ffda });
-        
-        // Line material for connections
-        const lineMaterial = new THREE.LineBasicMaterial({
+        // Create particle geometry (shared geometry for better performance)
+        const particleGeometry = new THREE.SphereGeometry(0.15, 8, 8);
+        const particleMaterial = new THREE.MeshBasicMaterial({ 
             color: 0x64ffda,
             transparent: true,
-            opacity: 0.4
+            opacity: 0.8
         });
         
         // Create particles
         for (let i = 0; i < particlesCount; i++) {
             const particle = new THREE.Mesh(particleGeometry, particleMaterial.clone());
             
-            // Random position
-            particle.position.x = Math.random() * 60 - 30;
-            particle.position.y = Math.random() * 60 - 30;
-            particle.position.z = Math.random() * 60 - 30;
+            // Random position within a smaller range
+            particle.position.x = Math.random() * 40 - 20;
+            particle.position.y = Math.random() * 40 - 20;
+            particle.position.z = Math.random() * 40 - 20;
             
-            // Store original position for animation effects
             particle.originalPosition = particle.position.clone();
             
-            // Add velocity for animation
+            // Slower velocity for smoother movement
             particle.velocity = new THREE.Vector3(
-                Math.random() * 0.06 - 0.03,
-                Math.random() * 0.06 - 0.03,
-                Math.random() * 0.06 - 0.03
+                Math.random() * 0.02 - 0.01,
+                Math.random() * 0.02 - 0.01,
+                Math.random() * 0.02 - 0.01
             );
             
-            // Track if particle is affected by mouse
             particle.affected = false;
             particle.explosionVelocity = new THREE.Vector3(0, 0, 0);
             
@@ -309,13 +309,33 @@
             particles.push(particle);
         }
         
-        // Lines to connect particles
+        // Optimized line handling
         const lines = [];
+        const lineMaterial = new THREE.LineBasicMaterial({
+            color: 0x64ffda,
+            transparent: true,
+            opacity: 0.2
+        });
         
-        // Function to update lines between particles
+        // Throttle function for performance
+        function throttle(func, limit) {
+            let inThrottle;
+            return function(...args) {
+                if (!inThrottle) {
+                    func.apply(this, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            }
+        }
+        
+        // Optimized line update function
         function updateLines() {
             // Remove old lines
-            lines.forEach(line => scene.remove(line));
+            lines.forEach(line => {
+                line.geometry.dispose();
+                scene.remove(line);
+            });
             lines.length = 0;
             
             // Create new lines between nearby particles
@@ -324,21 +344,13 @@
                     const distance = particles[i].position.distanceTo(particles[j].position);
                     
                     if (distance < maxDistance) {
-                        const opacity = 1 - (distance / maxDistance);
                         const lineGeometry = new THREE.BufferGeometry().setFromPoints([
                             particles[i].position,
                             particles[j].position
                         ]);
                         
-                        const line = new THREE.Line(
-                            lineGeometry,
-                            new THREE.LineBasicMaterial({
-                                color: 0x64ffda,
-                                transparent: true,
-                                opacity: opacity * 0.4
-                            })
-                        );
-                        
+                        const line = new THREE.Line(lineGeometry, lineMaterial.clone());
+                        line.material.opacity = 0.2 * (1 - distance / maxDistance);
                         scene.add(line);
                         lines.push(line);
                     }
@@ -346,40 +358,32 @@
             }
         }
         
-        // Mouse movement tracking
+        // Mouse movement tracking with throttling
         const mouse = new THREE.Vector2();
         const mouseWorldPos = new THREE.Vector3();
         
-        window.addEventListener('mousemove', (event) => {
-            // Update mouse coordinates
+        const handleMouseMove = throttle((event) => {
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            mouseWorldPos.set(mouse.x * 20, mouse.y * 20, 0);
             
-            // Calculate the world position of the mouse
-            mouseWorldPos.set(mouse.x * 30, mouse.y * 30, 0);
-            
-            // Apply explosion effect to nearby particles
             particles.forEach(particle => {
                 const distance = particle.position.distanceTo(mouseWorldPos);
                 
-                if (distance < 10) {
-                    // Particle is close to mouse - explode
+                if (distance < 8) {
                     particle.affected = true;
-                    
-                    // Calculate explosion direction away from mouse
                     const direction = new THREE.Vector3()
                         .subVectors(particle.position, mouseWorldPos)
                         .normalize();
-                    
-                    // Set explosion velocity proportional to closeness
-                    const explosionStrength = 0.8 * (1 - distance / 10);
+                    const explosionStrength = 0.4 * (1 - distance / 8);
                     particle.explosionVelocity.copy(direction).multiplyScalar(explosionStrength);
-                } else if (particle.affected && distance >= 10) {
-                    // Mouse moved away, start returning to original position
+                } else if (particle.affected && distance >= 8) {
                     particle.affected = false;
                 }
             });
-        });
+        }, 16); // ~60fps throttle
+        
+        window.addEventListener('mousemove', handleMouseMove);
         
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -398,45 +402,60 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
         
-        // Animation loop
-        function animate() {
+        // Optimized animation loop
+        let lastTime = 0;
+        const animationSpeed = 0.016; // ~60fps
+        
+        function animate(currentTime) {
             requestAnimationFrame(animate);
             
-            // Update particle positions
+            const deltaTime = (currentTime - lastTime) / 1000;
+            if (deltaTime < animationSpeed) return;
+            lastTime = currentTime;
+            
             particles.forEach(particle => {
-                // Apply normal floating animation
                 particle.position.add(particle.velocity);
                 
-                // Apply boundaries and bounce effects
                 ['x', 'y', 'z'].forEach(axis => {
-                    if (Math.abs(particle.position[axis]) > 30) {
-                        particle.velocity[axis] *= -1;
+                    if (Math.abs(particle.position[axis]) > 20) {
+                        particle.velocity[axis] *= -0.8; // Add some damping
                     }
                 });
                 
-                // Apply explosion effect if affected by mouse
                 if (particle.affected) {
                     particle.position.add(particle.explosionVelocity);
+                    particle.explosionVelocity.multiplyScalar(0.95); // Add damping to explosion
                 } else if (particle.position.distanceTo(particle.originalPosition) > 0.1) {
-                    // Return to original position when not affected
                     const returnDirection = new THREE.Vector3()
                         .subVectors(particle.originalPosition, particle.position)
                         .normalize()
-                        .multiplyScalar(0.05);
+                        .multiplyScalar(0.03);
                     
                     particle.position.add(returnDirection);
                 }
             });
             
-            // Update connecting lines
             updateLines();
-            
-            // Render the scene
             renderer.render(scene, camera);
         }
         
         // Start the animation loop
-        animate();
+        animate(0);
+        
+        // Cleanup on page unload
+        window.addEventListener('unload', () => {
+            scene.traverse(object => {
+                if (object.geometry) object.geometry.dispose();
+                if (object.material) {
+                    if (Array.isArray(object.material)) {
+                        object.material.forEach(material => material.dispose());
+                    } else {
+                        object.material.dispose();
+                    }
+                }
+            });
+            renderer.dispose();
+        });
     </script>
 </body>
 </html>
