@@ -44,16 +44,17 @@
             background: transparent;
             border-radius: 2.2rem;
             box-shadow: none;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: flex-start;
-            padding: 2.5rem 1.5rem;
             position: relative;
+            padding: 0;
+            display: block;
         }
         .network-title {
-            margin-bottom: 1.2rem;
-            margin-left: 0.1rem;
+            position: absolute;
+            top: 2.5rem;
+            left: 2.5rem;
+            z-index: 10;
+            margin: 0;
+            text-align: left;
         }
         .network-title .name {
             font-family: 'Inter', Arial, sans-serif;
@@ -115,17 +116,17 @@
     </style>
 </head>
 <body>
+    <div class="network-title">
+        <span class="name">Simone <span class="surname">Luchini</span></span>
+        <div class="subtitle">PhD Student</div>
+        <div class="underline"></div>
+    </div>
     <section class="hero-section">
         <div class="hero-text">
             Read more about my research.
         </div>
         <div class="network-box">
-            <div class="network-title">
-                <span class="name">Simone <span class="surname">Luchini</span></span>
-                <div class="subtitle">PhD Student</div>
-                <div class="underline"></div>
-            </div>
-            <canvas id="network-canvas" width="400" height="320"></canvas>
+            <canvas id="network-canvas" width="400" height="320" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;"></canvas>
         </div>
     </section>
     <script>
@@ -240,7 +241,7 @@
         for (const n of nodes) {
             n.x += n.dx;
             n.y += n.dy;
-            // Bounce off box
+            // Bounce off box, keep circles fully visible
             if (n.x - n.r < box.x) { n.x = box.x + n.r; n.dx *= -1; }
             if (n.x + n.r > box.x + box.w) { n.x = box.x + box.w - n.r; n.dx *= -1; }
             if (n.y - n.r < box.y) { n.y = box.y + n.r; n.dy *= -1; }
