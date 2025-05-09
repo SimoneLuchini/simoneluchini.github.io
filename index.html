@@ -103,10 +103,10 @@
     </style>
 </head>
 <body>
-    <section class="brain-hero">
-        <img id="brain-mask" src="brainoutline.png" alt="Brain Outline" style="display:none;" />
+    <section class="brain-hero" style="position:relative; min-height:95vh; width:100vw; overflow:hidden;">
+        <img id="brain-mask" src="brainoutline.png" alt="Brain Outline" style="position:absolute; left:50%; top:50%; width:90vw; height:90vh; max-width:900px; max-height:90vh; transform:translate(-50%,-50%); opacity:0.15; pointer-events:none; z-index:1;" />
         <canvas id="brain-canvas-mask" style="display:none;"></canvas>
-        <svg class="background-network"></svg>
+        <svg class="background-network" style="position:absolute; left:0; top:0; width:100vw; height:95vh; z-index:2;"></svg>
     </section>
     <section class="main-content">
         <h1>Simone Luchini</h1>
@@ -124,22 +124,8 @@
         </div>
     </section>
     <script>
-    // --- Dynamic blue gradient background ---
-    function setDynamicGradient() {
-        const scrollY = window.scrollY;
-        const docH = document.body.scrollHeight - window.innerHeight;
-        const percent = Math.min(1, scrollY / (docH || 1));
-        // From #232b5c (deep blue) to #6be0ff (bright blue)
-        const r1 = 35 + Math.round(70 * percent);
-        const g1 = 43 + Math.round(120 * percent);
-        const b1 = 92 + Math.round(120 * percent);
-        const r2 = 27 + Math.round(80 * percent);
-        const g2 = 255;
-        const b2 = 255;
-        document.body.style.background = `linear-gradient(135deg, rgb(${r1},${g1},${b1}) 0%, rgb(${r2},${g2},${b2}) 100%)`;
-    }
-    window.addEventListener('scroll', setDynamicGradient);
-    setDynamicGradient();
+    // --- Fixed blue gradient background (no scroll effect) ---
+    document.body.style.background = 'linear-gradient(135deg, #2e3192 0%, #1bffff 100%)';
 
     // --- Brain mask image and canvas setup ---
     const maskImg = document.getElementById('brain-mask');
@@ -161,7 +147,8 @@
 
     // Helper: check if (x, y) is inside the white/opaque part of the mask
     function isInBrainMask(x, y) {
-        if (!maskData) return false;
+        // If mask is not ready, allow everywhere (fallback)
+        if (!maskData) return true;
         const px = Math.floor(x), py = Math.floor(y);
         if (px < 0 || py < 0 || px >= maskW || py >= maskH) return false;
         const idx = (py * maskW + px) * 4;
