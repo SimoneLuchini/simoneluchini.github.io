@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simone Luchini - Personal Website</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0a192f;
+            color: #ccd6f6;
+            overflow-x: hidden;
+        }
+
+        #network-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            background-color: rgba(10, 25, 47, 0.8);
+            padding: 2rem;
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 650px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #64ffda;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #8892b0;
+            font-weight: 400;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background-color: transparent;
+            border: 1px solid #64ffda;
+            color: #64ffda;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: rgba(100, 255, 218, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .social-link {
+            color: #ccd6f6;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-link:hover {
+            color: #64ffda;
+        }
+        
+        #projects {
+            padding-top: 4rem;
+            margin-top: 4rem;
+        }
+        
+        #projects h2 {
+            font-size: 2rem;
+            color: #64ffda;
+            margin-bottom: 1.5rem;
+        }
+        
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .project-card {
+            background-color: rgba(17, 34, 64, 0.8);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .project-card h3 {
+            color: #e6f1ff;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        
+        #contact {
+            padding-top: 4rem;
+            margin-top: 4rem;
+        }
+        
+        #contact h2 {
+            font-size: 2rem;
+            color: #64ffda;
+            margin-bottom: 1.5rem;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+            }
+
+            .content {
+                padding: 1.5rem;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="network-container"></div>
+    
+    <div class="container">
+        <div class="content">
+            <h1>Simone Luchini</h1>
+            <h2>Software Developer & Tech Enthusiast</h2>
+            
+            <p>Welcome to my personal website! I'm passionate about creating elegant solutions to complex problems.</p>
+            
+            <p>With expertise in front-end development, data visualization, and building interactive web experiences, I strive to create meaningful digital products that help people achieve their goals.</p>
+            
+            <div class="buttons">
+                <a href="#projects" class="btn">View Projects</a>
+                <a href="#contact" class="btn">Contact Me</a>
+            </div>
+            
+            <div class="social-links">
+                <a href="https://github.com/simoneluchini" class="social-link" target="_blank">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://linkedin.com/in/simoneluchini" class="social-link" target="_blank">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://twitter.com/simoneluchini" class="social-link" target="_blank">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </div>
+        </div>
+        
+        <section id="projects">
+            <h2>Projects</h2>
+            <div class="project-grid">
+                <div class="project-card">
+                    <h3>Project One</h3>
+                    <p>A full-stack web application that helps users track their daily activities and provides insightful analytics.</p>
+                    <a href="#" class="btn">View Project</a>
+                </div>
+                <div class="project-card">
+                    <h3>Project Two</h3>
+                    <p>An interactive data visualization tool that transforms complex datasets into understandable visual representations.</p>
+                    <a href="#" class="btn">View Project</a>
+                </div>
+                <div class="project-card">
+                    <h3>Project Three</h3>
+                    <p>A mobile app designed to help users improve their productivity through gamification and reward systems.</p>
+                    <a href="#" class="btn">View Project</a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="contact">
+            <h2>Get In Touch</h2>
+            <p>I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.</p>
+            <a href="mailto:hello@simoneluchini.com" class="btn">Say Hello</a>
+        </section>
+        
+        <footer>
+            <p>© 2025 Simone Luchini. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Font Awesome for social icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    
+    <!-- Three.js for the network visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script>
+        // Network Visualization with Three.js
+        const networkContainer = document.getElementById('network-container');
+        
+        // Scene, camera and renderer configuration
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x0a192f, 1);
+        networkContainer.appendChild(renderer.domElement);
+        
+        // Camera position
+        camera.position.z = 30;
+        
+        // Particles and connections
+        const particlesCount = 150;
+        const maxDistance = 20;
+        const particles = [];
+        
+        // Create particle geometry
+        const particleGeometry = new THREE.SphereGeometry(0.2, 8, 8);
+        const particleMaterial = new THREE.MeshBasicMaterial({ color: 0x64ffda });
+        
+        // Line material for connections
+        const lineMaterial = new THREE.LineBasicMaterial({
+            color: 0x64ffda,
+            transparent: true,
+            opacity: 0.4
+        });
+        
+        // Create particles
+        for (let i = 0; i < particlesCount; i++) {
+            const particle = new THREE.Mesh(particleGeometry, particleMaterial.clone());
+            
+            // Random position
+            particle.position.x = Math.random() * 60 - 30;
+            particle.position.y = Math.random() * 60 - 30;
+            particle.position.z = Math.random() * 60 - 30;
+            
+            // Store original position for animation effects
+            particle.originalPosition = particle.position.clone();
+            
+            // Add velocity for animation
+            particle.velocity = new THREE.Vector3(
+                Math.random() * 0.06 - 0.03,
+                Math.random() * 0.06 - 0.03,
+                Math.random() * 0.06 - 0.03
+            );
+            
+            // Track if particle is affected by mouse
+            particle.affected = false;
+            particle.explosionVelocity = new THREE.Vector3(0, 0, 0);
+            
+            scene.add(particle);
+            particles.push(particle);
+        }
+        
+        // Lines to connect particles
+        const lines = [];
+        
+        // Function to update lines between particles
+        function updateLines() {
+            // Remove old lines
+            lines.forEach(line => scene.remove(line));
+            lines.length = 0;
+            
+            // Create new lines between nearby particles
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const distance = particles[i].position.distanceTo(particles[j].position);
+                    
+                    if (distance < maxDistance) {
+                        const opacity = 1 - (distance / maxDistance);
+                        const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+                            particles[i].position,
+                            particles[j].position
+                        ]);
+                        
+                        const line = new THREE.Line(
+                            lineGeometry,
+                            new THREE.LineBasicMaterial({
+                                color: 0x64ffda,
+                                transparent: true,
+                                opacity: opacity * 0.4
+                            })
+                        );
+                        
+                        scene.add(line);
+                        lines.push(line);
+                    }
+                }
+            }
+        }
+        
+        // Mouse movement tracking
+        const mouse = new THREE.Vector2();
+        const mouseWorldPos = new THREE.Vector3();
+        
+        window.addEventListener('mousemove', (event) => {
+            // Update mouse coordinates
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            // Calculate the world position of the mouse
+            mouseWorldPos.set(mouse.x * 30, mouse.y * 30, 0);
+            
+            // Apply explosion effect to nearby particles
+            particles.forEach(particle => {
+                const distance = particle.position.distanceTo(mouseWorldPos);
+                
+                if (distance < 10) {
+                    // Particle is close to mouse - explode
+                    particle.affected = true;
+                    
+                    // Calculate explosion direction away from mouse
+                    const direction = new THREE.Vector3()
+                        .subVectors(particle.position, mouseWorldPos)
+                        .normalize();
+                    
+                    // Set explosion velocity proportional to closeness
+                    const explosionStrength = 0.8 * (1 - distance / 10);
+                    particle.explosionVelocity.copy(direction).multiplyScalar(explosionStrength);
+                } else if (particle.affected && distance >= 10) {
+                    // Mouse moved away, start returning to original position
+                    particle.affected = false;
+                }
+            });
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Update particle positions
+            particles.forEach(particle => {
+                // Apply normal floating animation
+                particle.position.add(particle.velocity);
+                
+                // Apply boundaries and bounce effects
+                ['x', 'y', 'z'].forEach(axis => {
+                    if (Math.abs(particle.position[axis]) > 30) {
+                        particle.velocity[axis] *= -1;
+                    }
+                });
+                
+                // Apply explosion effect if affected by mouse
+                if (particle.affected) {
+                    particle.position.add(particle.explosionVelocity);
+                } else if (particle.position.distanceTo(particle.originalPosition) > 0.1) {
+                    // Return to original position when not affected
+                    const returnDirection = new THREE.Vector3()
+                        .subVectors(particle.originalPosition, particle.position)
+                        .normalize()
+                        .multiplyScalar(0.05);
+                    
+                    particle.position.add(returnDirection);
+                }
+            });
+            
+            // Update connecting lines
+            updateLines();
+            
+            // Render the scene
+            renderer.render(scene, camera);
+        }
+        
+        // Start the animation loop
+        animate();
+    </script>
+</body>
+</html>
