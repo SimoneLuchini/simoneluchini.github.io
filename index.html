@@ -105,11 +105,7 @@
             line-height: 1.6;
             margin-bottom: 1.1rem;
             margin-top: 0.2rem;
-            display: flex;
-            gap: 2rem;
-        }
-        .profile-description-text {
-            flex: 1;
+            display: block;
         }
         .profile-socials {
             font-size: 1.05rem;
@@ -118,7 +114,8 @@
             line-height: 1.7;
             margin-bottom: 0.5rem;
             text-align: left;
-            flex: 0 0 300px;
+            margin-top: 0;
+            margin-bottom: 1.1rem;
         }
         .profile-socials a {
             color: #4a7cff;
@@ -194,13 +191,12 @@
             }
             #network-canvas { height: 160px; }
             .profile-description {
-                flex-direction: column;
-                gap: 1rem;
+                display: block;
             }
             .profile-socials {
-                flex: none;
                 width: 100%;
-                margin-top: 0.5rem;
+                margin-top: 0;
+                margin-bottom: 1.1rem;
             }
         }
     </style>
@@ -224,9 +220,6 @@
         </div>
         <div class="profile-details-row">
             <div class="profile-description">
-                <div class="profile-description-text">
-                    Hello, I am Simone. Thank you for visiting my page. I study creativity in humans and artificial systems. My work intersects cognitive psychology, neuroscience, and artificial intelligence. I am currently a PhD student at Penn State University, working with Dr. Roger Beaty. I completed my BSc at The University of Westminster and my MSc at The University of Milano-Bicocca. I have been a visiting student at the labs of Dr. Emmanuelle Volle at the Paris Brain Institute, and Dr. Bodong Chen at the University of Pennsylvania.
-                </div>
                 <div class="profile-socials">
                     <b>Email</b>: combine skl5875 and @psu.edu<br>
                     <b>Scholar</b>: <a href="https://scholar.google.it/citations?user=EjaB5A0AAAAJ&hl=en&oi=ao" target="_blank" rel="noopener">Simone A. Luchini</a><br>
@@ -234,6 +227,7 @@
                     <b>Twitter/X</b>: <a href="https://x.com/Simone_Luchini" target="_blank" rel="noopener">@Simone_Luchini</a><br>
                     <b>Bluesky</b>: <a href="https://bsky.app/profile/simoneluchini.bsky.social" target="_blank" rel="noopener">@simoneluchini.bsky.social</a><br>
                 </div>
+                Hello, I am Simone. Thank you for visiting my page. I study creativity in humans and artificial systems. My work intersects cognitive psychology, neuroscience, and artificial intelligence. I am currently a PhD student at Penn State University, working with Dr. Roger Beaty. I completed my BSc at The University of Westminster and my MSc at The University of Milano-Bicocca. I have been a visiting student at the labs of Dr. Emmanuelle Volle at the Paris Brain Institute, and Dr. Bodong Chen at the University of Pennsylvania.
             </div>
         </div>
         <section class="hero-section">
