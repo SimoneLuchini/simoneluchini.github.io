@@ -124,162 +124,93 @@
     <canvas id="brain-mask" style="display:none;"></canvas>
     <img id="brain-outline" src="brainoutline.png" style="display:none;" crossorigin="anonymous">
     <script>
-    const brainImg = document.getElementById('brain-outline');
-    const maskCanvas = document.getElementById('brain-mask');
-    const networkCanvas = document.getElementById('network-canvas');
-    const ctx = networkCanvas.getContext('2d');
-    let isInsideOutline = () => true;
-    let brainReady = false;
-    let brainWidth = 0, brainHeight = 0;
-
-    const NODES = 70;
-    const LINES = 110;
+    // --- Simple network animation: dots inside an oval (brain area) ---
+    const canvas = document.getElementById('network-canvas');
+    const ctx = canvas.getContext('2d');
+    const NODES = 50;
     let nodes = [];
-    let lines = [];
+    let brain = {cx: 0, cy: 0, rx: 0, ry: 0};
 
     function resizeCanvas() {
-        networkCanvas.width = window.innerWidth;
-        networkCanvas.height = Math.floor(window.innerHeight * 0.95);
+        canvas.width = window.innerWidth;
+        canvas.height = Math.floor(window.innerHeight * 0.95);
+        // Define a simple oval as the brain area
+        brain.cx = canvas.width / 2;
+        brain.cy = canvas.height / 2;
+        brain.rx = canvas.width * 0.32;
+        brain.ry = canvas.height * 0.38;
     }
     resizeCanvas();
     window.addEventListener('resize', () => {
         resizeCanvas();
-        if (brainReady) resetAndStart();
+        initNetwork();
     });
 
-    brainImg.onload = function() {
-        maskCanvas.width = brainImg.width;
-        maskCanvas.height = brainImg.height;
-        brainWidth = brainImg.width;
-        brainHeight = brainImg.height;
-        const mctx = maskCanvas.getContext('2d');
-        mctx.drawImage(brainImg, 0, 0);
-        const imgData = mctx.getImageData(0, 0, brainImg.width, brainImg.height);
-        const mask = new Uint8Array(brainImg.width * brainImg.height);
-        for (let y = 0; y < brainImg.height; y++) {
-            for (let x = 0; x < brainImg.width; x++) {
-                const i = (y * brainImg.width + x) * 4;
-                const r = imgData.data[i], g = imgData.data[i+1], b = imgData.data[i+2], a = imgData.data[i+3];
-                if (a < 10) continue; // transparent
-                if (r < 50 && g < 50 && b < 50) continue; // black outline
-                mask[y * brainImg.width + x] = 1; // inside
-            }
-        }
-        isInsideOutline = (x, y) => {
-            x = Math.floor(x); y = Math.floor(y);
-            if (x < 0 || y < 0 || x >= brainImg.width || y >= brainImg.height) return false;
-            return mask[y * brainImg.width + x] === 1;
-        };
-        brainReady = true;
-        resetAndStart();
-    };
-    if (brainImg.complete) brainImg.onload();
-
-    function scaleToBrain(x, y) {
-        const w = networkCanvas.width;
-        const h = networkCanvas.height;
-        const scale = Math.min(w / brainWidth, h / brainHeight);
-        const offsetX = (w - brainWidth * scale) / 2;
-        const offsetY = (h - brainHeight * scale) / 2;
-        return [x * scale + offsetX, y * scale + offsetY, scale, offsetX, offsetY];
-    }
-    function scaleFromBrain(x, y) {
-        const w = networkCanvas.width;
-        const h = networkCanvas.height;
-        const scale = Math.min(w / brainWidth, h / brainHeight);
-        const offsetX = (w - brainWidth * scale) / 2;
-        const offsetY = (h - brainHeight * scale) / 2;
-        return [(x - offsetX) / scale, (y - offsetY) / scale];
+    function isInsideBrain(x, y) {
+        // Check if (x, y) is inside the ellipse
+        const dx = (x - brain.cx) / brain.rx;
+        const dy = (y - brain.cy) / brain.ry;
+        return dx * dx + dy * dy <= 1;
     }
 
     function initNetwork() {
         nodes = [];
-        lines = [];
-        if (!brainReady) return;
         for (let i = 0; i < NODES; i++) {
-            let tries = 0;
-            let x, y;
+            let x, y, tries = 0;
             do {
-                x = Math.random() * brainWidth;
-                y = Math.random() * brainHeight;
+                x = brain.cx + (Math.random() * 2 - 1) * brain.rx * 0.95;
+                y = brain.cy + (Math.random() * 2 - 1) * brain.ry * 0.95;
                 tries++;
-            } while (!isInsideOutline(x, y) && tries < 1000);
-            if (tries >= 1000) continue;
+            } while (!isInsideBrain(x, y) && tries < 100);
             nodes.push({
                 x, y,
-                r: 2.2 + Math.random() * 1.5,
-                dx: (Math.random() - 0.5) * 0.7,
-                dy: (Math.random() - 0.5) * 0.7
+                r: 4 + Math.random() * 2,
+                dx: (Math.random() - 0.5) * 1.2,
+                dy: (Math.random() - 0.5) * 1.2
             });
         }
-        while (lines.length < LINES) {
-            let a = Math.floor(Math.random() * nodes.length);
-            let b = Math.floor(Math.random() * nodes.length);
-            if (a !== b && !lines.some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a))) {
-                const dist = Math.hypot(nodes[a].x - nodes[b].x, nodes[a].y - nodes[b].y);
-                if (dist < Math.min(brainWidth, brainHeight) / 2.2) {
-                    lines.push({a, b});
-                }
-            }
-        }
     }
+    initNetwork();
 
     function drawNetwork() {
-        ctx.clearRect(0, 0, networkCanvas.width, networkCanvas.height);
-        // Draw brain outline
-        const w = networkCanvas.width;
-        const h = networkCanvas.height;
-        const scale = Math.min(w / brainWidth, h / brainHeight);
-        const offsetX = (w - brainWidth * scale) / 2;
-        const offsetY = (h - brainHeight * scale) / 2;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Draw the brain oval outline
         ctx.save();
-        ctx.globalAlpha = 1;
-        ctx.drawImage(brainImg, offsetX, offsetY, brainWidth * scale, brainHeight * scale);
+        ctx.beginPath();
+        ctx.ellipse(brain.cx, brain.cy, brain.rx, brain.ry, 0, 0, 2 * Math.PI);
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 2.5;
+        ctx.globalAlpha = 0.25;
+        ctx.stroke();
         ctx.restore();
-
-        // Draw lines
-        ctx.save();
-        ctx.globalAlpha = 0.5;
-        ctx.strokeStyle = '#38ef7d';
-        ctx.lineWidth = 1.1;
-        for (const l of lines) {
-            const n1 = nodes[l.a], n2 = nodes[l.b];
-            if (!isInsideOutline(n1.x, n1.y) || !isInsideOutline(n2.x, n2.y)) continue;
-            const [x1, y1] = scaleToBrain(n1.x, n1.y);
-            const [x2, y2] = scaleToBrain(n2.x, n2.y);
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.stroke();
-        }
-        ctx.restore();
-
         // Draw nodes
-        ctx.save();
-        ctx.globalAlpha = 0.85;
         for (const n of nodes) {
-            if (!isInsideOutline(n.x, n.y)) continue;
-            const [cx, cy, scale] = scaleToBrain(n.x, n.y);
             ctx.beginPath();
-            ctx.arc(cx, cy, n.r * scale, 0, 2 * Math.PI);
+            ctx.arc(n.x, n.y, n.r, 0, 2 * Math.PI);
             ctx.fillStyle = '#fff';
-            ctx.strokeStyle = '#38ef7d';
-            ctx.lineWidth = 0.7;
+            ctx.globalAlpha = 0.95;
             ctx.fill();
+            ctx.strokeStyle = '#38ef7d';
+            ctx.lineWidth = 1.2;
+            ctx.globalAlpha = 0.7;
             ctx.stroke();
         }
-        ctx.restore();
+        ctx.globalAlpha = 1;
     }
 
     function animate() {
-        if (!brainReady) return;
         for (const n of nodes) {
             let nextX = n.x + n.dx;
             let nextY = n.y + n.dy;
-            if (!isInsideOutline(nextX, nextY)) {
-                if (isInsideOutline(n.x - n.dx, nextY)) n.dx *= -1;
-                if (isInsideOutline(nextX, n.y - n.dy)) n.dy *= -1;
-                if (!isInsideOutline(n.x + n.dx, n.y + n.dy)) {
+            // Bounce off the oval boundary
+            if (!isInsideBrain(nextX, nextY)) {
+                // Reflect direction: simple approach
+                // Try reversing dx
+                if (isInsideBrain(n.x - n.dx, nextY)) n.dx *= -1;
+                // Try reversing dy
+                if (isInsideBrain(nextX, n.y - n.dy)) n.dy *= -1;
+                // If still not inside, reverse both
+                if (!isInsideBrain(n.x + n.dx, n.y + n.dy)) {
                     n.dx *= -1;
                     n.dy *= -1;
                 }
@@ -290,13 +221,7 @@
         drawNetwork();
         requestAnimationFrame(animate);
     }
-
-    function resetAndStart() {
-        if (!brainReady) return;
-        initNetwork();
-        drawNetwork();
-        animate();
-    }
+    animate();
     </script>
 </body>
 </html>
