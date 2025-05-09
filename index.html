@@ -85,89 +85,127 @@
         </div>
     </section>
     <script>
-    // --- Simple network animation: dots inside an oval (brain area) ---
+    // --- Pretty network animation: dots and lines in a box, with collisions ---
     const canvas = document.getElementById('network-canvas');
     const ctx = canvas.getContext('2d');
-    const NODES = 50;
+    const NODES = 30;
     let nodes = [];
-    let brain = {cx: 0, cy: 0, rx: 0, ry: 0};
+    let box = {x: 0, y: 0, w: 0, h: 0};
 
     function resizeCanvas() {
-        // Keep canvas size as set in HTML, but recalculate oval for responsive box
-        const box = canvas.parentElement;
-        const rect = box.getBoundingClientRect();
+        const parent = canvas.parentElement;
+        const rect = parent.getBoundingClientRect();
         canvas.width = rect.width;
         canvas.height = rect.height;
-        brain.cx = canvas.width / 2;
-        brain.cy = canvas.height / 2;
-        brain.rx = canvas.width * 0.38;
-        brain.ry = canvas.height * 0.44;
+        box.x = 0;
+        box.y = 0;
+        box.w = canvas.width;
+        box.h = canvas.height;
     }
-    function isInsideBrain(x, y) {
-        const dx = (x - brain.cx) / brain.rx;
-        const dy = (y - brain.cy) / brain.ry;
-        return dx * dx + dy * dy <= 1;
-    }
+
     function initNetwork() {
         nodes = [];
         for (let i = 0; i < NODES; i++) {
+            let r = 8;
             let x, y, tries = 0;
             do {
-                x = brain.cx + (Math.random() * 2 - 1) * brain.rx * 0.95;
-                y = brain.cy + (Math.random() * 2 - 1) * brain.ry * 0.95;
+                x = box.x + r + Math.random() * (box.w - 2 * r);
+                y = box.y + r + Math.random() * (box.h - 2 * r);
                 tries++;
-            } while (!isInsideBrain(x, y) && tries < 100);
+            } while (nodes.some(n => Math.hypot(n.x - x, n.y - y) < 2 * r) && tries < 100);
             nodes.push({
-                x, y,
-                r: 4 + Math.random() * 2,
-                dx: (Math.random() - 0.5) * 1.2,
-                dy: (Math.random() - 0.5) * 1.2
+                x, y, r,
+                dx: (Math.random() - 0.5) * 2.2,
+                dy: (Math.random() - 0.5) * 2.2
             });
         }
     }
+
     function drawNetwork() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // Draw the brain oval outline
+        // Draw lines between all pairs
         ctx.save();
-        ctx.beginPath();
-        ctx.ellipse(brain.cx, brain.cy, brain.rx, brain.ry, 0, 0, 2 * Math.PI);
-        ctx.strokeStyle = '#222';
-        ctx.lineWidth = 2.5;
-        ctx.globalAlpha = 0.18;
-        ctx.stroke();
+        ctx.globalAlpha = 0.22;
+        ctx.strokeStyle = 'rgba(56,239,125,0.7)';
+        ctx.shadowColor = '#38ef7d';
+        ctx.shadowBlur = 8;
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                const n1 = nodes[i], n2 = nodes[j];
+                ctx.beginPath();
+                ctx.moveTo(n1.x, n1.y);
+                ctx.lineTo(n2.x, n2.y);
+                ctx.stroke();
+            }
+        }
         ctx.restore();
         // Draw nodes
         for (const n of nodes) {
+            ctx.save();
             ctx.beginPath();
             ctx.arc(n.x, n.y, n.r, 0, 2 * Math.PI);
             ctx.fillStyle = '#fff';
-            ctx.globalAlpha = 0.95;
+            ctx.shadowColor = '#38ef7d';
+            ctx.shadowBlur = 12;
+            ctx.globalAlpha = 0.98;
             ctx.fill();
+            ctx.globalAlpha = 0.8;
+            ctx.lineWidth = 2.2;
             ctx.strokeStyle = '#38ef7d';
-            ctx.lineWidth = 1.2;
-            ctx.globalAlpha = 0.7;
             ctx.stroke();
+            ctx.restore();
         }
-        ctx.globalAlpha = 1;
     }
-    function animate() {
-        for (const n of nodes) {
-            let nextX = n.x + n.dx;
-            let nextY = n.y + n.dy;
-            if (!isInsideBrain(nextX, nextY)) {
-                if (isInsideBrain(n.x - n.dx, nextY)) n.dx *= -1;
-                if (isInsideBrain(nextX, n.y - n.dy)) n.dy *= -1;
-                if (!isInsideBrain(n.x + n.dx, n.y + n.dy)) {
-                    n.dx *= -1;
-                    n.dy *= -1;
+
+    function handleCollisions() {
+        // Dot-to-dot collisions (elastic)
+        for (let i = 0; i < nodes.length; i++) {
+            for (let j = i + 1; j < nodes.length; j++) {
+                const n1 = nodes[i], n2 = nodes[j];
+                const dx = n2.x - n1.x;
+                const dy = n2.y - n1.y;
+                const dist = Math.hypot(dx, dy);
+                const minDist = n1.r + n2.r;
+                if (dist < minDist) {
+                    // Overlap, push apart
+                    const overlap = 0.5 * (minDist - dist + 0.1);
+                    const nx = dx / (dist || 1);
+                    const ny = dy / (dist || 1);
+                    n1.x -= nx * overlap;
+                    n1.y -= ny * overlap;
+                    n2.x += nx * overlap;
+                    n2.y += ny * overlap;
+                    // Elastic collision (swap velocities along the normal)
+                    const dvx = n2.dx - n1.dx;
+                    const dvy = n2.dy - n1.dy;
+                    const dot = dvx * nx + dvy * ny;
+                    if (dot < 0) {
+                        const impulse = dot;
+                        n1.dx += nx * impulse;
+                        n1.dy += ny * impulse;
+                        n2.dx -= nx * impulse;
+                        n2.dy -= ny * impulse;
+                    }
                 }
             }
+        }
+    }
+
+    function animate() {
+        for (const n of nodes) {
             n.x += n.dx;
             n.y += n.dy;
+            // Bounce off box
+            if (n.x - n.r < box.x) { n.x = box.x + n.r; n.dx *= -1; }
+            if (n.x + n.r > box.x + box.w) { n.x = box.x + box.w - n.r; n.dx *= -1; }
+            if (n.y - n.r < box.y) { n.y = box.y + n.r; n.dy *= -1; }
+            if (n.y + n.r > box.y + box.h) { n.y = box.y + box.h - n.r; n.dy *= -1; }
         }
+        handleCollisions();
         drawNetwork();
         requestAnimationFrame(animate);
     }
+
     function setup() {
         resizeCanvas();
         initNetwork();
