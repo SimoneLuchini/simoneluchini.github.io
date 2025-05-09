@@ -104,7 +104,7 @@
             height: 5px;
             background: #e05a3c;
             border-radius: 2px;
-            margin: 0 auto 2.2rem auto;
+            margin-bottom: 2.2rem;
             display: block;
         }
         .profile-description {
@@ -136,25 +136,21 @@
         }
         .hero-section {
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            align-items: stretch;
             min-height: 30vh;
             padding: 5rem 1rem 2rem 1rem;
-            gap: 2.5rem;
+            gap: 2.2rem;
             background: transparent;
         }
         .hero-text {
-            flex: 1 1 350px;
-            max-width: 500px;
             font-size: 2.1rem;
             font-weight: 600;
             line-height: 1.3;
             color: #1a2233;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
             text-align: center;
+            width: 100%;
         }
         .network-box {
             flex: 0 0 400px;
@@ -242,9 +238,7 @@
         </div>
         <section class="hero-section">
             <div class="hero-underline"></div>
-            <div class="hero-text">
-                Research.
-            </div>
+            <div class="hero-text">Research.</div>
         </section>
     </div>
     <script>
