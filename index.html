@@ -87,9 +87,13 @@
         }
         #network-canvas {
             width: 100%;
-            height: 320px;
-            max-width: 420px;
+            height: 100%;
             display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            max-width: none;
         }
         @media (max-width: 900px) {
             .hero-section {
@@ -126,7 +130,7 @@
             Read more about my research.
         </div>
         <div class="network-box">
-            <canvas id="network-canvas" width="400" height="320" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;"></canvas>
+            <canvas id="network-canvas"></canvas>
         </div>
     </section>
     <script>
@@ -140,8 +144,8 @@
     function resizeCanvas() {
         const parent = canvas.parentElement;
         const rect = parent.getBoundingClientRect();
-        canvas.width = rect.width;
-        canvas.height = rect.height;
+        canvas.width = Math.round(rect.width);
+        canvas.height = Math.round(rect.height);
         box.x = 0;
         box.y = 0;
         box.w = canvas.width;
@@ -151,7 +155,7 @@
     function initNetwork() {
         nodes = [];
         for (let i = 0; i < NODES; i++) {
-            let r = 7 + Math.random() * 4; // 7 to 11
+            let r = 5 + Math.random() * 2; // 5 to 7
             let x, y, tries = 0;
             do {
                 x = box.x + r + Math.random() * (box.w - 2 * r);
