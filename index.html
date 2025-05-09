@@ -104,7 +104,7 @@
 </head>
 <body>
     <section class="brain-hero" style="position:relative; min-height:95vh; width:100vw; overflow:hidden;">
-        <svg class="background-network" style="position:absolute; left:0; top:0; width:100vw; height:95vh; z-index:2;"></svg>
+        <canvas id="network-canvas" class="background-network" style="position:absolute; left:0; top:0; width:100vw; height:95vh; z-index:2;"></canvas>
     </section>
     <section class="main-content">
         <h1>Simone Luchini</h1>
@@ -124,24 +124,37 @@
     <canvas id="brain-mask" style="display:none;"></canvas>
     <img id="brain-outline" src="brainoutline.png" style="display:none;" crossorigin="anonymous">
     <script>
-    // --- Greenish network animation inside brain outline ---
-    document.body.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
-
-    const svg = document.querySelector('.background-network');
     const brainImg = document.getElementById('brain-outline');
     const maskCanvas = document.getElementById('brain-mask');
-    let isInsideOutline = () => true; // fallback
+    const networkCanvas = document.getElementById('network-canvas');
+    const ctx = networkCanvas.getContext('2d');
+    let isInsideOutline = () => true;
     let brainReady = false;
     let brainWidth = 0, brainHeight = 0;
+
+    const NODES = 70;
+    const LINES = 110;
+    let nodes = [];
+    let lines = [];
+
+    function resizeCanvas() {
+        networkCanvas.width = window.innerWidth;
+        networkCanvas.height = Math.floor(window.innerHeight * 0.95);
+    }
+    resizeCanvas();
+    window.addEventListener('resize', () => {
+        resizeCanvas();
+        if (brainReady) resetAndStart();
+    });
 
     brainImg.onload = function() {
         maskCanvas.width = brainImg.width;
         maskCanvas.height = brainImg.height;
         brainWidth = brainImg.width;
         brainHeight = brainImg.height;
-        const ctx = maskCanvas.getContext('2d');
-        ctx.drawImage(brainImg, 0, 0);
-        const imgData = ctx.getImageData(0, 0, brainImg.width, brainImg.height);
+        const mctx = maskCanvas.getContext('2d');
+        mctx.drawImage(brainImg, 0, 0);
+        const imgData = mctx.getImageData(0, 0, brainImg.width, brainImg.height);
         const mask = new Uint8Array(brainImg.width * brainImg.height);
         for (let y = 0; y < brainImg.height; y++) {
             for (let x = 0; x < brainImg.width; x++) {
@@ -162,33 +175,27 @@
     };
     if (brainImg.complete) brainImg.onload();
 
-    const NODES = 70;
-    const LINES = 110;
-    let nodes = [];
-    let lines = [];
     function scaleToBrain(x, y) {
-        // Center brain in hero area
-        const w = window.innerWidth;
-        const h = Math.floor(window.innerHeight * 0.95);
+        const w = networkCanvas.width;
+        const h = networkCanvas.height;
         const scale = Math.min(w / brainWidth, h / brainHeight);
         const offsetX = (w - brainWidth * scale) / 2;
         const offsetY = (h - brainHeight * scale) / 2;
         return [x * scale + offsetX, y * scale + offsetY, scale, offsetX, offsetY];
     }
     function scaleFromBrain(x, y) {
-        // Inverse of scaleToBrain
-        const w = window.innerWidth;
-        const h = Math.floor(window.innerHeight * 0.95);
+        const w = networkCanvas.width;
+        const h = networkCanvas.height;
         const scale = Math.min(w / brainWidth, h / brainHeight);
         const offsetX = (w - brainWidth * scale) / 2;
         const offsetY = (h - brainHeight * scale) / 2;
         return [(x - offsetX) / scale, (y - offsetY) / scale];
     }
+
     function initNetwork() {
         nodes = [];
         lines = [];
         if (!brainReady) return;
-        // Place nodes only inside the outline
         for (let i = 0; i < NODES; i++) {
             let tries = 0;
             let x, y;
@@ -205,7 +212,6 @@
                 dy: (Math.random() - 0.5) * 0.7
             });
         }
-        // Create random lines between nodes (favor nearby nodes)
         while (lines.length < LINES) {
             let a = Math.floor(Math.random() * nodes.length);
             let b = Math.floor(Math.random() * nodes.length);
@@ -217,55 +223,62 @@
             }
         }
     }
+
     function drawNetwork() {
-        svg.innerHTML = '';
-        const w = window.innerWidth;
-        const h = Math.floor(window.innerHeight * 0.95);
-        // Draw the brain outline image as SVG background
-        svg.style.background = `url('brainoutline.png') center center / contain no-repeat`;
-        svg.setAttribute('width', w);
-        svg.setAttribute('height', h);
+        ctx.clearRect(0, 0, networkCanvas.width, networkCanvas.height);
+        // Draw brain outline
+        const w = networkCanvas.width;
+        const h = networkCanvas.height;
+        const scale = Math.min(w / brainWidth, h / brainHeight);
+        const offsetX = (w - brainWidth * scale) / 2;
+        const offsetY = (h - brainHeight * scale) / 2;
+        ctx.save();
+        ctx.globalAlpha = 1;
+        ctx.drawImage(brainImg, offsetX, offsetY, brainWidth * scale, brainHeight * scale);
+        ctx.restore();
+
         // Draw lines
+        ctx.save();
+        ctx.globalAlpha = 0.5;
+        ctx.strokeStyle = '#38ef7d';
+        ctx.lineWidth = 1.1;
         for (const l of lines) {
             const n1 = nodes[l.a], n2 = nodes[l.b];
             if (!isInsideOutline(n1.x, n1.y) || !isInsideOutline(n2.x, n2.y)) continue;
             const [x1, y1] = scaleToBrain(n1.x, n1.y);
             const [x2, y2] = scaleToBrain(n2.x, n2.y);
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('x1', x1);
-            line.setAttribute('y1', y1);
-            line.setAttribute('x2', x2);
-            line.setAttribute('y2', y2);
-            line.setAttribute('stroke', '#38ef7d');
-            line.setAttribute('stroke-width', '1.1');
-            line.setAttribute('opacity', '0.5');
-            svg.appendChild(line);
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
         }
+        ctx.restore();
+
         // Draw nodes
+        ctx.save();
+        ctx.globalAlpha = 0.85;
         for (const n of nodes) {
             if (!isInsideOutline(n.x, n.y)) continue;
             const [cx, cy, scale] = scaleToBrain(n.x, n.y);
-            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            circle.setAttribute('cx', cx);
-            circle.setAttribute('cy', cy);
-            circle.setAttribute('r', n.r * scale);
-            circle.setAttribute('fill', '#fff');
-            circle.setAttribute('stroke', '#38ef7d');
-            circle.setAttribute('stroke-width', '0.7');
-            circle.setAttribute('opacity', '0.85');
-            svg.appendChild(circle);
+            ctx.beginPath();
+            ctx.arc(cx, cy, n.r * scale, 0, 2 * Math.PI);
+            ctx.fillStyle = '#fff';
+            ctx.strokeStyle = '#38ef7d';
+            ctx.lineWidth = 0.7;
+            ctx.fill();
+            ctx.stroke();
         }
+        ctx.restore();
     }
+
     function animate() {
         if (!brainReady) return;
         for (const n of nodes) {
             let nextX = n.x + n.dx;
             let nextY = n.y + n.dy;
             if (!isInsideOutline(nextX, nextY)) {
-                // Try reflecting dx or dy
                 if (isInsideOutline(n.x - n.dx, nextY)) n.dx *= -1;
                 if (isInsideOutline(nextX, n.y - n.dy)) n.dy *= -1;
-                // If still not inside, reverse both
                 if (!isInsideOutline(n.x + n.dx, n.y + n.dy)) {
                     n.dx *= -1;
                     n.dy *= -1;
@@ -277,15 +290,13 @@
         drawNetwork();
         requestAnimationFrame(animate);
     }
+
     function resetAndStart() {
         if (!brainReady) return;
         initNetwork();
         drawNetwork();
         animate();
     }
-    window.addEventListener('resize', resetAndStart);
-    // Only start after brain image is loaded
-    if (brainImg.complete) brainImg.onload();
     </script>
 </body>
 </html>
