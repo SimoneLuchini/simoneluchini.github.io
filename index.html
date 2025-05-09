@@ -248,195 +248,127 @@
     <!-- Font Awesome for social icons -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
     
-    <!-- Three.js for the network visualization -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
+    <!-- Lightweight Canvas Network Animation -->
     <script>
-        // Network Visualization with Three.js
-        const networkContainer = document.getElementById('network-container');
-        
-        // Scene, camera and renderer configuration
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ 
-            antialias: true, 
-            alpha: true,
-            powerPreference: 'high-performance'
+    // Canvas-based network animation
+    const networkContainer = document.getElementById('network-container');
+    const canvas = document.createElement('canvas');
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.display = 'block';
+    canvas.style.position = 'absolute';
+    canvas.style.top = 0;
+    canvas.style.left = 0;
+    canvas.style.zIndex = -1;
+    networkContainer.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Network parameters
+    const POINTS = 40;
+    const MAX_DIST = 140;
+    const nodes = [];
+    for (let i = 0; i < POINTS; i++) {
+        nodes.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.7,
+            vy: (Math.random() - 0.5) * 0.7
         });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Limit pixel ratio for better performance
-        renderer.setClearColor(0x0a192f, 1);
-        networkContainer.appendChild(renderer.domElement);
-        
-        // Camera position
-        camera.position.z = 30;
-        
-        // Optimized particles and connections
-        const particlesCount = 50; // Further reduced particle count
-        const maxDistance = 15;
-        const particles = [];
-        
-        // Create particle geometry (shared geometry for better performance)
-        const particleGeometry = new THREE.SphereGeometry(0.15, 8, 8);
-        const particleMaterial = new THREE.MeshBasicMaterial({ 
-            color: 0x64ffda,
-            transparent: true,
-            opacity: 0.8
-        });
-        
-        // Create particles
-        for (let i = 0; i < particlesCount; i++) {
-            const particle = new THREE.Mesh(particleGeometry, particleMaterial.clone());
-            particle.position.x = Math.random() * 40 - 20;
-            particle.position.y = Math.random() * 40 - 20;
-            particle.position.z = Math.random() * 40 - 20;
-            particle.originalPosition = particle.position.clone();
-            particle.velocity = new THREE.Vector3(
-                Math.random() * 0.02 - 0.01,
-                Math.random() * 0.02 - 0.01,
-                Math.random() * 0.02 - 0.01
-            );
-            particle.affected = false;
-            particle.explosionVelocity = new THREE.Vector3(0, 0, 0);
-            scene.add(particle);
-            particles.push(particle);
-        }
-        
-        // --- Efficient line management ---
-        let linePool = [];
-        let activeLines = 0;
-        const maxPossibleLines = (particlesCount * (particlesCount - 1)) / 2;
-        const baseLineMaterial = new THREE.LineBasicMaterial({
-            color: 0x64ffda,
-            transparent: true,
-            opacity: 0.2
-        });
-        // Pre-create line objects and add to pool
-        for (let i = 0; i < maxPossibleLines; i++) {
-            const geometry = new THREE.BufferGeometry();
-            geometry.setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
-            const line = new THREE.Line(geometry, baseLineMaterial.clone());
-            line.visible = false;
-            scene.add(line);
-            linePool.push(line);
-        }
-        
-        // Only update lines every N frames
-        let frameCount = 0;
-        function updateLines() {
-            activeLines = 0;
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const distance = particles[i].position.distanceTo(particles[j].position);
-                    if (distance < maxDistance && activeLines < linePool.length) {
-                        const line = linePool[activeLines];
-                        const positions = [particles[i].position, particles[j].position];
-                        line.geometry.setFromPoints(positions);
-                        line.material.opacity = 0.2 * (1 - distance / maxDistance);
-                        line.visible = true;
-                        activeLines++;
-                    }
+    }
+    let mouse = {x: null, y: null};
+    window.addEventListener('mousemove', e => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+    window.addEventListener('mouseout', () => {
+        mouse.x = null;
+        mouse.y = null;
+    });
+
+    function draw() {
+        ctx.clearRect(0, 0, width, height);
+        // Draw lines
+        for (let i = 0; i < POINTS; i++) {
+            for (let j = i + 1; j < POINTS; j++) {
+                const dx = nodes[i].x - nodes[j].x;
+                const dy = nodes[i].y - nodes[j].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < MAX_DIST) {
+                    ctx.save();
+                    ctx.globalAlpha = 0.15 * (1 - dist / MAX_DIST);
+                    ctx.strokeStyle = '#64ffda';
+                    ctx.beginPath();
+                    ctx.moveTo(nodes[i].x, nodes[i].y);
+                    ctx.lineTo(nodes[j].x, nodes[j].y);
+                    ctx.stroke();
+                    ctx.restore();
                 }
             }
-            // Hide unused lines
-            for (let i = activeLines; i < linePool.length; i++) {
-                linePool[i].visible = false;
-            }
         }
-        
-        // Mouse movement tracking with throttling
-        const mouse = new THREE.Vector2();
-        const mouseWorldPos = new THREE.Vector3();
-        
-        const handleMouseMove = throttle((event) => {
-            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-            mouseWorldPos.set(mouse.x * 20, mouse.y * 20, 0);
-            
-            particles.forEach(particle => {
-                const distance = particle.position.distanceTo(mouseWorldPos);
-                
-                if (distance < 8) {
-                    particle.affected = true;
-                    const direction = new THREE.Vector3()
-                        .subVectors(particle.position, mouseWorldPos)
-                        .normalize();
-                    const explosionStrength = 0.4 * (1 - distance / 8);
-                    particle.explosionVelocity.copy(direction).multiplyScalar(explosionStrength);
-                } else if (particle.affected && distance >= 8) {
-                    particle.affected = false;
-                }
-            });
-        }, 16); // ~60fps throttle
-        
-        window.addEventListener('mousemove', handleMouseMove);
-        
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
-        });
-        
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-        
-        // Optimized animation loop
-        let lastTime = 0;
-        const animationSpeed = 0.016; // ~60fps
-        function animate(currentTime) {
-            requestAnimationFrame(animate);
-            const deltaTime = (currentTime - lastTime) / 1000;
-            if (deltaTime < animationSpeed) return;
-            lastTime = currentTime;
-            particles.forEach(particle => {
-                particle.position.add(particle.velocity);
-                ['x', 'y', 'z'].forEach(axis => {
-                    if (Math.abs(particle.position[axis]) > 20) {
-                        particle.velocity[axis] *= -0.8;
-                    }
-                });
-                if (particle.affected) {
-                    particle.position.add(particle.explosionVelocity);
-                    particle.explosionVelocity.multiplyScalar(0.95);
-                } else if (particle.position.distanceTo(particle.originalPosition) > 0.1) {
-                    const returnDirection = new THREE.Vector3()
-                        .subVectors(particle.originalPosition, particle.position)
-                        .normalize()
-                        .multiplyScalar(0.03);
-                    particle.position.add(returnDirection);
-                }
-            });
-            // Only update lines every 10 frames
-            frameCount++;
-            if (frameCount % 10 === 0) {
-                updateLines();
-            }
-            renderer.render(scene, camera);
+        // Draw points
+        for (let i = 0; i < POINTS; i++) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(nodes[i].x, nodes[i].y, 3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#64ffda';
+            ctx.shadowColor = '#64ffda';
+            ctx.shadowBlur = 8;
+            ctx.globalAlpha = 0.85;
+            ctx.fill();
+            ctx.restore();
         }
-        animate(0);
-        
-        // Cleanup on page unload
-        window.addEventListener('unload', () => {
-            scene.traverse(object => {
-                if (object.geometry) object.geometry.dispose();
-                if (object.material) {
-                    if (Array.isArray(object.material)) {
-                        object.material.forEach(material => material.dispose());
-                    } else {
-                        object.material.dispose();
-                    }
+    }
+
+    function update() {
+        for (let i = 0; i < POINTS; i++) {
+            nodes[i].x += nodes[i].vx;
+            nodes[i].y += nodes[i].vy;
+            // Bounce off edges
+            if (nodes[i].x < 0 || nodes[i].x > width) nodes[i].vx *= -1;
+            if (nodes[i].y < 0 || nodes[i].y > height) nodes[i].vy *= -1;
+            // Mouse repulsion
+            if (mouse.x !== null && mouse.y !== null) {
+                const dx = nodes[i].x - mouse.x;
+                const dy = nodes[i].y - mouse.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 80) {
+                    nodes[i].vx += dx / dist * 0.15;
+                    nodes[i].vy += dy / dist * 0.15;
                 }
+            }
+            // Limit velocity
+            nodes[i].vx = Math.max(Math.min(nodes[i].vx, 1), -1);
+            nodes[i].vy = Math.max(Math.min(nodes[i].vy, 1), -1);
+        }
+    }
+
+    function animate() {
+        update();
+        draw();
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
             });
-            renderer.dispose();
         });
+    });
     </script>
 </body>
 </html>
