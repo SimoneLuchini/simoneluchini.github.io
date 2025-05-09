@@ -26,6 +26,12 @@
             padding: 2.5rem 2.5rem 0 2.5rem;
             box-sizing: border-box;
         }
+        .profile-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+        }
         .profile-header {
             display: flex;
             align-items: center;
@@ -102,6 +108,7 @@
             font-family: 'Inter', Arial, sans-serif;
             line-height: 1.7;
             margin-bottom: 0.5rem;
+            text-align: right;
         }
         .profile-socials a {
             color: #4a7cff;
@@ -155,6 +162,7 @@
         }
         @media (max-width: 900px) {
             .main-container { padding: 1.2rem 0.7rem 0 0.7rem; }
+            .profile-header-row { flex-direction: column; align-items: stretch; }
             .profile-header { flex-direction: column; align-items: flex-start; gap: 1.2rem; margin-top: 1.2rem; }
             .profile-photo { width: 120px; }
             .network-title .name { font-size: 1.7rem; }
@@ -165,24 +173,22 @@
             .network-box { min-width: 220px; min-height: 220px; }
             #network-canvas { height: 220px; }
             .hero-text { font-size: 1.3rem; }
+            .profile-socials { text-align: left; margin-bottom: 1.2rem; }
         }
     </style>
 </head>
 <body>
     <div class="main-container">
-        <div class="profile-header">
-            <img src="SimoneLuchini-3.jpg" alt="Simone Luchini" class="profile-photo" />
-            <div class="profile-main">
-                <div class="network-title">
-                    <span class="name">Simone <span class="surname">Luchini</span></span>
-                    <div class="subtitle">PhD Student</div>
-                    <div class="underline"></div>
+        <div class="profile-header-row">
+            <div class="profile-header">
+                <img src="SimoneLuchini-3.jpg" alt="Simone Luchini" class="profile-photo" />
+                <div class="profile-main">
+                    <div class="network-title">
+                        <span class="name">Simone <span class="surname">Luchini</span></span>
+                        <div class="subtitle">PhD Student</div>
+                        <div class="underline"></div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="profile-details-row">
-            <div class="profile-description">
-                Hi, I am Simone. Thank you for visiting my page. I study how the brain generates creative ideas and how neural networks give rise to imagination and innovation. My work is at the intersection of neuroscience, creativity, and artificial intelligence. I am currently a PhD student at <a href="#">[Your University]</a>. When I am not doing science, I enjoy music, hiking, and reading about the mind.
             </div>
             <div class="profile-socials">
                 <b>Email</b>: <a href="mailto:simone.luchini@email.com">simone.luchini@email.com</a><br>
@@ -190,6 +196,11 @@
                 <b>GitHub</b>: <a href="#">simoluchini</a><br>
                 <b>Twitter/X</b>: <a href="#">@SimoneLuchini</a><br>
                 <b>Bluesky</b>: <a href="#">simoluchini.bsky.social</a><br>
+            </div>
+        </div>
+        <div class="profile-details-row">
+            <div class="profile-description">
+                Hi, I am Simone. Thank you for visiting my page. I study how the brain generates creative ideas and how neural networks give rise to imagination and innovation. My work is at the intersection of neuroscience, creativity, and artificial intelligence. I am currently a PhD student at <a href="#">[Your University]</a>. When I am not doing science, I enjoy music, hiking, and reading about the mind.
             </div>
         </div>
         <section class="hero-section">
