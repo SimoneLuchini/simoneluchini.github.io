@@ -41,9 +41,9 @@
             max-width: 500px;
             min-width: 320px;
             min-height: 320px;
-            background: #fff;
+            background: transparent;
             border-radius: 2.2rem;
-            box-shadow: 0 4px 32px 0 rgba(0,0,0,0.08);
+            box-shadow: none;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -106,7 +106,7 @@
     function initNetwork() {
         nodes = [];
         for (let i = 0; i < NODES; i++) {
-            let r = 8;
+            let r = 7 + Math.random() * 4; // 7 to 11
             let x, y, tries = 0;
             do {
                 x = box.x + r + Math.random() * (box.w - 2 * r);
@@ -125,10 +125,10 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         // Draw lines between all pairs
         ctx.save();
-        ctx.globalAlpha = 0.22;
-        ctx.strokeStyle = 'rgba(56,239,125,0.7)';
-        ctx.shadowColor = '#38ef7d';
-        ctx.shadowBlur = 8;
+        ctx.globalAlpha = 0.18;
+        ctx.strokeStyle = 'rgba(90,120,255,0.7)'; // soft blue
+        ctx.shadowColor = '#7f8cff';
+        ctx.shadowBlur = 12;
         for (let i = 0; i < nodes.length; i++) {
             for (let j = i + 1; j < nodes.length; j++) {
                 const n1 = nodes[i], n2 = nodes[j];
@@ -144,17 +144,18 @@
             ctx.save();
             ctx.beginPath();
             ctx.arc(n.x, n.y, n.r, 0, 2 * Math.PI);
-            ctx.fillStyle = '#fff';
-            ctx.shadowColor = '#38ef7d';
-            ctx.shadowBlur = 12;
+            ctx.fillStyle = '#eaf0ff';
+            ctx.shadowColor = '#7f8cff';
+            ctx.shadowBlur = 16;
             ctx.globalAlpha = 0.98;
             ctx.fill();
-            ctx.globalAlpha = 0.8;
+            ctx.globalAlpha = 0.85;
             ctx.lineWidth = 2.2;
-            ctx.strokeStyle = '#38ef7d';
+            ctx.strokeStyle = '#7f8cff';
             ctx.stroke();
             ctx.restore();
         }
+        ctx.globalAlpha = 1;
     }
 
     function handleCollisions() {
