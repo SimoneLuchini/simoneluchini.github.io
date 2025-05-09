@@ -24,8 +24,8 @@
             display: flex;
             align-items: center;
             gap: 2.2rem;
-            margin-bottom: 1.2rem;
-            margin-left: 0.1rem;
+            margin-bottom: 0.2rem;
+            margin-left: 2.5rem;
         }
         .profile-photo {
             width: 170px;
@@ -36,6 +36,14 @@
         }
         .profile-main {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .profile-details-row {
+            width: 100%;
+            margin-left: 2.5rem;
+            margin-bottom: 1.2rem;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -161,16 +169,18 @@
                 <div class="subtitle">PhD Student</div>
                 <div class="underline"></div>
             </div>
-            <div class="profile-description">
-                Hi, I am Simone. Thank you for visiting my page. I study how the brain generates creative ideas and how neural networks give rise to imagination and innovation. My work is at the intersection of neuroscience, creativity, and artificial intelligence. I am currently a PhD student at <a href="#">[Your University]</a>. When I am not doing science, I enjoy music, hiking, and reading about the mind.
-            </div>
-            <div class="profile-socials">
-                <b>Email</b>: <a href="mailto:simone.luchini@email.com">simone.luchini@email.com</a><br>
-                <b>Scholar</b>: <a href="#">Simone Luchini</a><br>
-                <b>GitHub</b>: <a href="#">simoluchini</a><br>
-                <b>Twitter/X</b>: <a href="#">@SimoneLuchini</a><br>
-                <b>Bluesky</b>: <a href="#">simoluchini.bsky.social</a><br>
-            </div>
+        </div>
+    </div>
+    <div class="profile-details-row">
+        <div class="profile-description">
+            Hi, I am Simone. Thank you for visiting my page. I study how the brain generates creative ideas and how neural networks give rise to imagination and innovation. My work is at the intersection of neuroscience, creativity, and artificial intelligence. I am currently a PhD student at <a href="#">[Your University]</a>. When I am not doing science, I enjoy music, hiking, and reading about the mind.
+        </div>
+        <div class="profile-socials">
+            <b>Email</b>: <a href="mailto:simone.luchini@email.com">simone.luchini@email.com</a><br>
+            <b>Scholar</b>: <a href="#">Simone Luchini</a><br>
+            <b>GitHub</b>: <a href="#">simoluchini</a><br>
+            <b>Twitter/X</b>: <a href="#">@SimoneLuchini</a><br>
+            <b>Bluesky</b>: <a href="#">simoluchini.bsky.social</a><br>
         </div>
     </div>
     <section class="hero-section">
