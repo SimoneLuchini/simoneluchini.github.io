@@ -104,6 +104,8 @@
 </head>
 <body>
     <section class="brain-hero">
+        <img id="brain-mask" src="brainoutline.png" alt="Brain Outline" style="display:none;" />
+        <canvas id="brain-canvas-mask" style="display:none;"></canvas>
         <svg class="background-network"></svg>
     </section>
     <section class="main-content">
@@ -139,7 +141,37 @@
     window.addEventListener('scroll', setDynamicGradient);
     setDynamicGradient();
 
-    // --- Brain-shaped network animation with SVG outline and bouncing nodes inside ---
+    // --- Brain mask image and canvas setup ---
+    const maskImg = document.getElementById('brain-mask');
+    const maskCanvas = document.getElementById('brain-canvas-mask');
+    let maskCtx, maskW, maskH, maskData;
+    function updateMaskCanvas() {
+        maskW = window.innerWidth;
+        maskH = Math.floor(window.innerHeight * 0.95);
+        maskCanvas.width = maskW;
+        maskCanvas.height = maskH;
+        maskCtx = maskCanvas.getContext('2d');
+        maskCtx.clearRect(0, 0, maskW, maskH);
+        // Draw the image stretched to fit the hero area
+        maskCtx.drawImage(maskImg, 0, 0, maskW, maskH);
+        maskData = maskCtx.getImageData(0, 0, maskW, maskH).data;
+    }
+    maskImg.onload = updateMaskCanvas;
+    window.addEventListener('resize', updateMaskCanvas);
+
+    // Helper: check if (x, y) is inside the white/opaque part of the mask
+    function isInBrainMask(x, y) {
+        if (!maskData) return false;
+        const px = Math.floor(x), py = Math.floor(y);
+        if (px < 0 || py < 0 || px >= maskW || py >= maskH) return false;
+        const idx = (py * maskW + px) * 4;
+        // Check alpha and brightness (tolerate some anti-aliasing)
+        const alpha = maskData[idx + 3];
+        const brightness = (maskData[idx] + maskData[idx+1] + maskData[idx+2]) / 3;
+        return alpha > 100 && brightness > 127;
+    }
+
+    // --- Network animation inside mask ---
     const svg = document.querySelector('.background-network');
     function resizeSVG() {
         svg.setAttribute('width', window.innerWidth);
@@ -148,24 +180,6 @@
     resizeSVG();
     window.addEventListener('resize', resizeSVG);
 
-    // SVG path for brain outline (matches provided image, scaled to viewport)
-    function getBrainPath(w, h) {
-        // This path is hand-tuned to resemble the provided image
-        return `M ${w*0.25},${h*0.35}
-            Q ${w*0.10},${h*0.45} ${w*0.18},${h*0.60}
-            Q ${w*0.07},${h*0.80} ${w*0.30},${h*0.85}
-            Q ${w*0.28},${h*0.97} ${w*0.40},${h*0.93}
-            Q ${w*0.45},${h*0.99} ${w*0.50},${h*0.93}
-            Q ${w*0.55},${h*0.99} ${w*0.60},${h*0.93}
-            Q ${w*0.72},${h*0.97} ${w*0.70},${h*0.85}
-            Q ${w*0.93},${h*0.80} ${w*0.82},${h*0.60}
-            Q ${w*0.90},${h*0.45} ${w*0.75},${h*0.35}
-            Q ${w*0.60},${h*0.18} ${w*0.50},${h*0.22}
-            Q ${w*0.40},${h*0.18} ${w*0.25},${h*0.35}
-            M ${w*0.50},${h*0.93} Q ${w*0.48},${h*0.98} ${w*0.46},${h*1.05}`;
-    }
-
-    // Network parameters
     const NODES = 70;
     const LINES = 110;
     let nodes = [];
@@ -174,21 +188,12 @@
         nodes = [];
         lines = [];
         const w = window.innerWidth;
-        const h = window.innerHeight * 0.95;
-        const path = getBrainPath(w, h);
-        // Place nodes randomly inside the brain shape
+        const h = Math.floor(window.innerHeight * 0.95);
         let tries = 0;
-        // Use canvas 2D context for point-in-path
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        ctx.beginPath();
-        const p = new Path2D(path);
-        ctx.stroke(p);
-        while (nodes.length < NODES && tries < 5000) {
-            const x = w * (0.10 + 0.80 * Math.random());
-            const y = h * (0.10 + 0.80 * Math.random());
-            if (ctx.isPointInPath(p, x, y)) {
+        while (nodes.length < NODES && tries < 10000) {
+            const x = w * (0.05 + 0.9 * Math.random());
+            const y = h * (0.05 + 0.9 * Math.random());
+            if (isInBrainMask(x, y)) {
                 nodes.push({
                     x, y,
                     r: 2.2 + Math.random() * 1.5,
@@ -213,18 +218,7 @@
     function drawNetwork() {
         svg.innerHTML = '';
         const w = window.innerWidth;
-        const h = window.innerHeight * 0.95;
-        // Draw brain outline
-        const brainPath = getBrainPath(w, h);
-        const outline = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        outline.setAttribute('d', brainPath);
-        outline.setAttribute('fill', 'none');
-        outline.setAttribute('stroke', '#fff');
-        outline.setAttribute('stroke-width', '3.5');
-        outline.setAttribute('opacity', '0.8');
-        outline.setAttribute('stroke-linecap', 'round');
-        outline.setAttribute('stroke-linejoin', 'round');
-        svg.appendChild(outline);
+        const h = Math.floor(window.innerHeight * 0.95);
         // Draw lines
         for (const l of lines) {
             const n1 = nodes[l.a], n2 = nodes[l.b];
@@ -253,20 +247,12 @@
     }
     function animate() {
         const w = window.innerWidth;
-        const h = window.innerHeight * 0.95;
-        const brainPath = getBrainPath(w, h);
-        // Use canvas 2D context for point-in-path
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        ctx.beginPath();
-        const p = new Path2D(brainPath);
-        ctx.stroke(p);
+        const h = Math.floor(window.innerHeight * 0.95);
         for (const n of nodes) {
             n.x += n.dx;
             n.y += n.dy;
-            // Bounce off the brain outline
-            if (!ctx.isPointInPath(p, n.x, n.y)) {
+            // Bounce off the mask outline
+            if (!isInBrainMask(n.x, n.y)) {
                 n.dx *= -1;
                 n.dy *= -1;
                 n.x += n.dx * 2;
@@ -277,12 +263,22 @@
         requestAnimationFrame(animate);
     }
     function resetAndStart() {
+        if (!maskData) {
+            setTimeout(resetAndStart, 100);
+            return;
+        }
         initNetwork();
         drawNetwork();
         animate();
     }
-    window.addEventListener('resize', resetAndStart);
-    resetAndStart();
+    maskImg.onload = () => {
+        updateMaskCanvas();
+        resetAndStart();
+    };
+    window.addEventListener('resize', () => {
+        updateMaskCanvas();
+        resetAndStart();
+    });
     </script>
 </body>
 </html>
