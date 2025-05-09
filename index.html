@@ -20,41 +20,28 @@
             position: relative;
             overflow-x: hidden;
         }
-        .hero-section {
+        .profile-header {
             display: flex;
-            justify-content: center;
             align-items: center;
-            min-height: 70vh;
-            padding: 3rem 1rem 2rem 1rem;
-            gap: 2.5rem;
+            gap: 2.2rem;
+            margin-bottom: 1.2rem;
+            margin-left: 0.1rem;
         }
-        .hero-text {
-            flex: 1 1 350px;
-            max-width: 500px;
-            font-size: 2.1rem;
-            font-weight: 600;
-            line-height: 1.3;
-            color: #1a2233;
+        .profile-photo {
+            width: 170px;
+            max-width: 40vw;
+            border-radius: 1.2rem;
+            object-fit: cover;
+            box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);
         }
-        .network-box {
-            flex: 1 1 350px;
-            max-width: 500px;
-            min-width: 320px;
-            min-height: 320px;
-            background: transparent;
-            border-radius: 2.2rem;
-            box-shadow: none;
-            position: relative;
-            padding: 0;
-            display: block;
-            overflow: visible;
+        .profile-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
         .network-title {
-            position: absolute;
-            top: 2.5rem;
-            left: 2.5rem;
-            z-index: 10;
-            margin: 0;
+            margin: 0 0 0.7rem 0;
             text-align: left;
         }
         .network-title .name {
@@ -86,6 +73,61 @@
             margin-top: 0.2rem;
             margin-bottom: 0.5rem;
         }
+        .profile-description {
+            font-size: 1.13rem;
+            color: #222;
+            font-family: 'Inter', Arial, sans-serif;
+            line-height: 1.6;
+            margin-bottom: 1.1rem;
+            margin-top: 0.2rem;
+        }
+        .profile-socials {
+            font-size: 1.05rem;
+            color: #222;
+            font-family: 'Inter', Arial, sans-serif;
+            line-height: 1.7;
+            margin-bottom: 0.5rem;
+        }
+        .profile-socials a {
+            color: #4a7cff;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+        .profile-socials a:hover {
+            color: #e05a3c;
+        }
+        .hero-section {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            min-height: 60vh;
+            padding: 2.5rem 1rem 2rem 1rem;
+            gap: 2.5rem;
+        }
+        .hero-text {
+            flex: 1 1 350px;
+            max-width: 500px;
+            font-size: 2.1rem;
+            font-weight: 600;
+            line-height: 1.3;
+            color: #1a2233;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .network-box {
+            flex: 1 1 350px;
+            max-width: 500px;
+            min-width: 320px;
+            min-height: 320px;
+            background: transparent;
+            border-radius: 2.2rem;
+            box-shadow: none;
+            position: relative;
+            padding: 0;
+            display: block;
+            overflow: visible;
+        }
         #network-canvas {
             width: 100%;
             height: 100%;
@@ -96,83 +138,49 @@
             z-index: 1;
             max-width: none;
         }
-        .profile-section {
-            display: flex;
-            align-items: flex-start;
-            gap: 1.5rem;
-            margin-bottom: 1.2rem;
-            margin-left: 0.1rem;
-        }
-        .profile-photo {
-            width: 110px;
-            max-width: 30vw;
-            border-radius: 1.1rem;
-            object-fit: cover;
-            box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);
-        }
-        .profile-info {
-            flex: 1;
-            font-size: 1.08rem;
-            color: #222;
-            font-family: 'Inter', Arial, sans-serif;
-            line-height: 1.6;
-        }
-        .profile-info a {
-            color: #4a7cff;
-            text-decoration: underline;
-            transition: color 0.2s;
-        }
-        .profile-info a:hover {
-            color: #e05a3c;
-        }
         @media (max-width: 900px) {
-            .hero-section {
-                flex-direction: column;
-                gap: 1.5rem;
-                min-height: 60vh;
-            }
-            .network-box {
-                min-width: 220px;
-                min-height: 220px;
-                padding: 1.2rem 0.5rem;
-            }
-            #network-canvas {
-                height: 220px;
-            }
-            .hero-text {
-                font-size: 1.3rem;
-            }
+            .profile-header { flex-direction: column; align-items: flex-start; gap: 1.2rem; }
+            .profile-photo { width: 120px; }
             .network-title .name { font-size: 1.7rem; }
             .network-title .surname { font-size: 1.7rem; }
             .network-title .subtitle { font-size: 1.1rem; }
             .network-title .underline { width: 38px; height: 3px; }
-            .profile-section { flex-direction: column; align-items: flex-start; gap: 0.7rem; }
-            .profile-photo { width: 80px; }
+            .hero-section { flex-direction: column; gap: 1.5rem; min-height: 40vh; }
+            .network-box { min-width: 220px; min-height: 220px; }
+            #network-canvas { height: 220px; }
+            .hero-text { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
-    <div class="network-box">
-        <div class="network-title">
-            <span class="name">Simone <span class="surname">Luchini</span></span>
-            <div class="subtitle">PhD Student</div>
-            <div class="underline"></div>
-        </div>
-        <div class="profile-section">
-            <img src="SimoneLuchini-3.jpg" alt="Simone Luchini" class="profile-photo" />
-            <div class="profile-info">
+    <div class="profile-header">
+        <img src="SimoneLuchini-3.jpg" alt="Simone Luchini" class="profile-photo" />
+        <div class="profile-main">
+            <div class="network-title">
+                <span class="name">Simone <span class="surname">Luchini</span></span>
+                <div class="subtitle">PhD Student</div>
+                <div class="underline"></div>
+            </div>
+            <div class="profile-description">
+                Hi, I am Simone. Thank you for visiting my page. I study how the brain generates creative ideas and how neural networks give rise to imagination and innovation. My work is at the intersection of neuroscience, creativity, and artificial intelligence. I am currently a PhD student at <a href="#">[Your University]</a>. When I am not doing science, I enjoy music, hiking, and reading about the mind.
+            </div>
+            <div class="profile-socials">
                 <b>Email</b>: <a href="mailto:simone.luchini@email.com">simone.luchini@email.com</a><br>
                 <b>Scholar</b>: <a href="#">Simone Luchini</a><br>
                 <b>GitHub</b>: <a href="#">simoluchini</a><br>
                 <b>Twitter/X</b>: <a href="#">@SimoneLuchini</a><br>
                 <b>Bluesky</b>: <a href="#">simoluchini.bsky.social</a><br>
-                <div style="margin-top:0.7rem;">
-                    Hi, I am Simone. Thank you for visiting my page. I study how the brain generates creative ideas and how neural networks give rise to imagination and innovation. My work is at the intersection of neuroscience, creativity, and artificial intelligence. I am currently a PhD student at <a href="#">[Your University]</a>. When I am not doing science, I enjoy music, hiking, and reading about the mind.
-                </div>
             </div>
         </div>
-        <canvas id="network-canvas"></canvas>
     </div>
+    <section class="hero-section">
+        <div class="hero-text">
+            Learn more about my research.
+        </div>
+        <div class="network-box">
+            <canvas id="network-canvas"></canvas>
+        </div>
+    </section>
     <script>
     // --- Pretty network animation: dots and lines in a box, with collisions ---
     const canvas = document.getElementById('network-canvas');
