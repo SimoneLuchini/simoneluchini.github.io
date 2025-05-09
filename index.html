@@ -272,8 +272,8 @@
         camera.position.z = 30;
         
         // Optimized particles and connections
-        const particlesCount = 80; // Reduced particle count
-        const maxDistance = 15; // Reduced connection distance
+        const particlesCount = 50; // Further reduced particle count
+        const maxDistance = 15;
         const particles = [];
         
         // Create particle geometry (shared geometry for better performance)
@@ -287,74 +287,60 @@
         // Create particles
         for (let i = 0; i < particlesCount; i++) {
             const particle = new THREE.Mesh(particleGeometry, particleMaterial.clone());
-            
-            // Random position within a smaller range
             particle.position.x = Math.random() * 40 - 20;
             particle.position.y = Math.random() * 40 - 20;
             particle.position.z = Math.random() * 40 - 20;
-            
             particle.originalPosition = particle.position.clone();
-            
-            // Slower velocity for smoother movement
             particle.velocity = new THREE.Vector3(
                 Math.random() * 0.02 - 0.01,
                 Math.random() * 0.02 - 0.01,
                 Math.random() * 0.02 - 0.01
             );
-            
             particle.affected = false;
             particle.explosionVelocity = new THREE.Vector3(0, 0, 0);
-            
             scene.add(particle);
             particles.push(particle);
         }
         
-        // Optimized line handling
-        const lines = [];
-        const lineMaterial = new THREE.LineBasicMaterial({
+        // --- Efficient line management ---
+        let linePool = [];
+        let activeLines = 0;
+        const maxPossibleLines = (particlesCount * (particlesCount - 1)) / 2;
+        const baseLineMaterial = new THREE.LineBasicMaterial({
             color: 0x64ffda,
             transparent: true,
             opacity: 0.2
         });
-        
-        // Throttle function for performance
-        function throttle(func, limit) {
-            let inThrottle;
-            return function(...args) {
-                if (!inThrottle) {
-                    func.apply(this, args);
-                    inThrottle = true;
-                    setTimeout(() => inThrottle = false, limit);
-                }
-            }
+        // Pre-create line objects and add to pool
+        for (let i = 0; i < maxPossibleLines; i++) {
+            const geometry = new THREE.BufferGeometry();
+            geometry.setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+            const line = new THREE.Line(geometry, baseLineMaterial.clone());
+            line.visible = false;
+            scene.add(line);
+            linePool.push(line);
         }
         
-        // Optimized line update function
+        // Only update lines every N frames
+        let frameCount = 0;
         function updateLines() {
-            // Remove old lines
-            lines.forEach(line => {
-                line.geometry.dispose();
-                scene.remove(line);
-            });
-            lines.length = 0;
-            
-            // Create new lines between nearby particles
+            activeLines = 0;
             for (let i = 0; i < particles.length; i++) {
                 for (let j = i + 1; j < particles.length; j++) {
                     const distance = particles[i].position.distanceTo(particles[j].position);
-                    
-                    if (distance < maxDistance) {
-                        const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-                            particles[i].position,
-                            particles[j].position
-                        ]);
-                        
-                        const line = new THREE.Line(lineGeometry, lineMaterial.clone());
+                    if (distance < maxDistance && activeLines < linePool.length) {
+                        const line = linePool[activeLines];
+                        const positions = [particles[i].position, particles[j].position];
+                        line.geometry.setFromPoints(positions);
                         line.material.opacity = 0.2 * (1 - distance / maxDistance);
-                        scene.add(line);
-                        lines.push(line);
+                        line.visible = true;
+                        activeLines++;
                     }
                 }
+            }
+            // Hide unused lines
+            for (let i = activeLines; i < linePool.length; i++) {
+                linePool[i].visible = false;
             }
         }
         
@@ -405,41 +391,36 @@
         // Optimized animation loop
         let lastTime = 0;
         const animationSpeed = 0.016; // ~60fps
-        
         function animate(currentTime) {
             requestAnimationFrame(animate);
-            
             const deltaTime = (currentTime - lastTime) / 1000;
             if (deltaTime < animationSpeed) return;
             lastTime = currentTime;
-            
             particles.forEach(particle => {
                 particle.position.add(particle.velocity);
-                
                 ['x', 'y', 'z'].forEach(axis => {
                     if (Math.abs(particle.position[axis]) > 20) {
-                        particle.velocity[axis] *= -0.8; // Add some damping
+                        particle.velocity[axis] *= -0.8;
                     }
                 });
-                
                 if (particle.affected) {
                     particle.position.add(particle.explosionVelocity);
-                    particle.explosionVelocity.multiplyScalar(0.95); // Add damping to explosion
+                    particle.explosionVelocity.multiplyScalar(0.95);
                 } else if (particle.position.distanceTo(particle.originalPosition) > 0.1) {
                     const returnDirection = new THREE.Vector3()
                         .subVectors(particle.originalPosition, particle.position)
                         .normalize()
                         .multiplyScalar(0.03);
-                    
                     particle.position.add(returnDirection);
                 }
             });
-            
-            updateLines();
+            // Only update lines every 10 frames
+            frameCount++;
+            if (frameCount % 10 === 0) {
+                updateLines();
+            }
             renderer.render(scene, camera);
         }
-        
-        // Start the animation loop
         animate(0);
         
         // Cleanup on page unload
