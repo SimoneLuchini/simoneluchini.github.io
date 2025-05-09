@@ -13,116 +13,77 @@
         }
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            /* Gradient: light blue to light green */
+            background: linear-gradient(180deg, #b2eaff 0%, #d2f7e5 100%);
             color: #1a2233;
             font-family: 'Inter', Arial, sans-serif;
             position: relative;
             overflow-x: hidden;
         }
-        .background-network {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 0;
-            pointer-events: none;
-        }
-        .main-content {
-            position: relative;
-            z-index: 1;
-            max-width: 700px;
-            margin: 4rem auto 0 auto;
-            padding: 2.5rem 2rem 2.5rem 2rem;
-            text-align: center;
-        }
-        header {
+        .hero-section {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            padding: 2rem 2.5rem 0.5rem 2.5rem;
-            font-size: 1.1rem;
-            font-family: 'Inter', Arial, sans-serif;
-            background: transparent;
+            min-height: 70vh;
+            padding: 3rem 1rem 2rem 1rem;
+            gap: 2.5rem;
         }
-        .site-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            letter-spacing: 0.03em;
-        }
-        nav {
-            display: flex;
-            gap: 2rem;
-        }
-        nav a {
+        .hero-text {
+            flex: 1 1 350px;
+            max-width: 500px;
+            font-size: 2.1rem;
+            font-weight: 600;
+            line-height: 1.3;
             color: #1a2233;
-            text-decoration: none;
-            font-weight: 500;
-            border-bottom: 2px solid transparent;
-            transition: border 0.2s;
         }
-        nav a.active, nav a:hover {
-            border-bottom: 2px solid #1bffff;
+        .network-box {
+            flex: 1 1 350px;
+            max-width: 500px;
+            min-width: 320px;
+            min-height: 320px;
+            background: #fff;
+            border-radius: 2.2rem;
+            box-shadow: 0 4px 32px 0 rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 1.5rem;
         }
-        h1 {
-            font-family: 'Inter', Arial, sans-serif;
-            font-size: 2.7rem;
-            font-weight: 700;
-            margin: 2.5rem 0 1.2rem 0;
-            letter-spacing: 0.01em;
+        #network-canvas {
+            width: 100%;
+            height: 320px;
+            max-width: 420px;
+            display: block;
         }
-        h2 {
-            font-family: 'Inter', Arial, sans-serif;
-            font-size: 1.5rem;
-            margin: 2.5rem 0 1.2rem 0;
-            font-weight: 700;
-        }
-        .intro {
-            font-size: 1.18rem;
-            max-width: 600px;
-            margin: 0 auto 2.5rem auto;
-            line-height: 1.7;
-        }
-        .core-questions {
-            margin: 3rem 0 2rem 0;
-        }
-        .core-questions h2 {
-            margin-bottom: 1.5rem;
-        }
-        .questions-list {
-            font-size: 1.08rem;
-            margin-top: 1.5rem;
-        }
-        .questions-list p {
-            margin: 0.5rem 0;
-        }
-        @media (max-width: 700px) {
-            h1 { font-size: 1.5rem; }
-            h2 { font-size: 1.1rem; }
-            .main-content { padding: 1.2rem 0.5rem; margin-top: 1.5rem; }
-            header { flex-direction: column; gap: 0.7rem; padding: 1rem 0.5rem 0.5rem 0.5rem; }
-            nav { gap: 1rem; }
+        @media (max-width: 900px) {
+            .hero-section {
+                flex-direction: column;
+                gap: 1.5rem;
+                min-height: 60vh;
+            }
+            .network-box {
+                min-width: 220px;
+                min-height: 220px;
+                padding: 1.2rem 0.5rem;
+            }
+            #network-canvas {
+                height: 220px;
+            }
+            .hero-text {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
 <body>
-    <section class="brain-hero" style="position:relative; min-height:95vh; width:100vw; overflow:hidden;">
-        <canvas id="network-canvas" class="background-network" style="position:absolute; left:0; top:0; width:100vw; height:95vh; z-index:2;"></canvas>
-    </section>
-    <section class="main-content">
-        <h1>Simone Luchini</h1>
-        <div class="intro">
-            I am a researcher passionate about the science of the mind, creativity, and the brain. My work explores how neural networks give rise to imagination, problem-solving, and innovation.<br><br>
-            Here you can learn more about my research, read my latest publications and blog posts, or get in touch to discuss ideas and collaborations.
+    <section class="hero-section">
+        <div class="hero-text">
+            Read more about my research.
         </div>
-        <div class="core-questions">
-            <h2>Research Interests</h2>
-            <div class="questions-list">
-                <p>How does the brain generate creative ideas?</p>
-                <p>What are the neural and psychological mechanisms of imagination?</p>
-                <p>How can we foster creativity and innovation in science and society?</p>
-            </div>
+        <div class="network-box">
+            <canvas id="network-canvas" width="400" height="320"></canvas>
         </div>
     </section>
-    <canvas id="brain-mask" style="display:none;"></canvas>
-    <img id="brain-outline" src="brainoutline.png" style="display:none;" crossorigin="anonymous">
     <script>
     // --- Simple network animation: dots inside an oval (brain area) ---
     const canvas = document.getElementById('network-canvas');
@@ -132,27 +93,21 @@
     let brain = {cx: 0, cy: 0, rx: 0, ry: 0};
 
     function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = Math.floor(window.innerHeight * 0.95);
-        // Define a simple oval as the brain area
+        // Keep canvas size as set in HTML, but recalculate oval for responsive box
+        const box = canvas.parentElement;
+        const rect = box.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
         brain.cx = canvas.width / 2;
         brain.cy = canvas.height / 2;
-        brain.rx = canvas.width * 0.32;
-        brain.ry = canvas.height * 0.38;
+        brain.rx = canvas.width * 0.38;
+        brain.ry = canvas.height * 0.44;
     }
-    resizeCanvas();
-    window.addEventListener('resize', () => {
-        resizeCanvas();
-        initNetwork();
-    });
-
     function isInsideBrain(x, y) {
-        // Check if (x, y) is inside the ellipse
         const dx = (x - brain.cx) / brain.rx;
         const dy = (y - brain.cy) / brain.ry;
         return dx * dx + dy * dy <= 1;
     }
-
     function initNetwork() {
         nodes = [];
         for (let i = 0; i < NODES; i++) {
@@ -170,8 +125,6 @@
             });
         }
     }
-    initNetwork();
-
     function drawNetwork() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         // Draw the brain oval outline
@@ -180,7 +133,7 @@
         ctx.ellipse(brain.cx, brain.cy, brain.rx, brain.ry, 0, 0, 2 * Math.PI);
         ctx.strokeStyle = '#222';
         ctx.lineWidth = 2.5;
-        ctx.globalAlpha = 0.25;
+        ctx.globalAlpha = 0.18;
         ctx.stroke();
         ctx.restore();
         // Draw nodes
@@ -197,19 +150,13 @@
         }
         ctx.globalAlpha = 1;
     }
-
     function animate() {
         for (const n of nodes) {
             let nextX = n.x + n.dx;
             let nextY = n.y + n.dy;
-            // Bounce off the oval boundary
             if (!isInsideBrain(nextX, nextY)) {
-                // Reflect direction: simple approach
-                // Try reversing dx
                 if (isInsideBrain(n.x - n.dx, nextY)) n.dx *= -1;
-                // Try reversing dy
                 if (isInsideBrain(nextX, n.y - n.dy)) n.dy *= -1;
-                // If still not inside, reverse both
                 if (!isInsideBrain(n.x + n.dx, n.y + n.dy)) {
                     n.dx *= -1;
                     n.dy *= -1;
@@ -221,6 +168,13 @@
         drawNetwork();
         requestAnimationFrame(animate);
     }
+    function setup() {
+        resizeCanvas();
+        initNetwork();
+        drawNetwork();
+    }
+    window.addEventListener('resize', setup);
+    setup();
     animate();
     </script>
 </body>
