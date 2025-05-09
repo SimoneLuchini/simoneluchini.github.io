@@ -13,7 +13,7 @@
         }
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #2e3192 0%, #1bffff 100%);
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: #1a2233;
             font-family: 'Inter', Arial, sans-serif;
             position: relative;
@@ -104,8 +104,6 @@
 </head>
 <body>
     <section class="brain-hero" style="position:relative; min-height:95vh; width:100vw; overflow:hidden;">
-        <img id="brain-mask" src="brainoutline.png" alt="Brain Outline" style="position:absolute; left:50%; top:50%; width:90vw; height:90vh; max-width:900px; max-height:90vh; transform:translate(-50%,-50%); opacity:0.15; pointer-events:none; z-index:1;" />
-        <canvas id="brain-canvas-mask" style="display:none;"></canvas>
         <svg class="background-network" style="position:absolute; left:0; top:0; width:100vw; height:95vh; z-index:2;"></svg>
     </section>
     <section class="main-content">
@@ -124,41 +122,9 @@
         </div>
     </section>
     <script>
-    // --- Fixed blue gradient background (no scroll effect) ---
-    document.body.style.background = 'linear-gradient(135deg, #2e3192 0%, #1bffff 100%)';
+    // --- Greenish network animation freely moving ---
+    document.body.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
 
-    // --- Brain mask image and canvas setup ---
-    const maskImg = document.getElementById('brain-mask');
-    const maskCanvas = document.getElementById('brain-canvas-mask');
-    let maskCtx, maskW, maskH, maskData;
-    function updateMaskCanvas() {
-        maskW = window.innerWidth;
-        maskH = Math.floor(window.innerHeight * 0.95);
-        maskCanvas.width = maskW;
-        maskCanvas.height = maskH;
-        maskCtx = maskCanvas.getContext('2d');
-        maskCtx.clearRect(0, 0, maskW, maskH);
-        // Draw the image stretched to fit the hero area
-        maskCtx.drawImage(maskImg, 0, 0, maskW, maskH);
-        maskData = maskCtx.getImageData(0, 0, maskW, maskH).data;
-    }
-    maskImg.onload = updateMaskCanvas;
-    window.addEventListener('resize', updateMaskCanvas);
-
-    // Helper: check if (x, y) is inside the white/opaque part of the mask
-    function isInBrainMask(x, y) {
-        // If mask is not ready, allow everywhere (fallback)
-        if (!maskData) return true;
-        const px = Math.floor(x), py = Math.floor(y);
-        if (px < 0 || py < 0 || px >= maskW || py >= maskH) return false;
-        const idx = (py * maskW + px) * 4;
-        // Check alpha and brightness (tolerate some anti-aliasing)
-        const alpha = maskData[idx + 3];
-        const brightness = (maskData[idx] + maskData[idx+1] + maskData[idx+2]) / 3;
-        return alpha > 100 && brightness > 127;
-    }
-
-    // --- Network animation inside mask ---
     const svg = document.querySelector('.background-network');
     function resizeSVG() {
         svg.setAttribute('width', window.innerWidth);
@@ -176,19 +142,14 @@
         lines = [];
         const w = window.innerWidth;
         const h = Math.floor(window.innerHeight * 0.95);
-        let tries = 0;
-        while (nodes.length < NODES && tries < 10000) {
-            const x = w * (0.05 + 0.9 * Math.random());
-            const y = h * (0.05 + 0.9 * Math.random());
-            if (isInBrainMask(x, y)) {
-                nodes.push({
-                    x, y,
-                    r: 2.2 + Math.random() * 1.5,
-                    dx: (Math.random() - 0.5) * 0.7,
-                    dy: (Math.random() - 0.5) * 0.7
-                });
-            }
-            tries++;
+        for (let i = 0; i < NODES; i++) {
+            nodes.push({
+                x: w * Math.random(),
+                y: h * Math.random(),
+                r: 2.2 + Math.random() * 1.5,
+                dx: (Math.random() - 0.5) * 0.7,
+                dy: (Math.random() - 0.5) * 0.7
+            });
         }
         // Create random lines between nodes (favor nearby nodes)
         while (lines.length < LINES) {
@@ -214,7 +175,7 @@
             line.setAttribute('y1', n1.y);
             line.setAttribute('x2', n2.x);
             line.setAttribute('y2', n2.y);
-            line.setAttribute('stroke', '#6be0ff');
+            line.setAttribute('stroke', '#38ef7d');
             line.setAttribute('stroke-width', '1.1');
             line.setAttribute('opacity', '0.5');
             svg.appendChild(line);
@@ -226,7 +187,7 @@
             circle.setAttribute('cy', n.y);
             circle.setAttribute('r', n.r);
             circle.setAttribute('fill', '#fff');
-            circle.setAttribute('stroke', '#6be0ff');
+            circle.setAttribute('stroke', '#38ef7d');
             circle.setAttribute('stroke-width', '0.7');
             circle.setAttribute('opacity', '0.85');
             svg.appendChild(circle);
@@ -238,34 +199,20 @@
         for (const n of nodes) {
             n.x += n.dx;
             n.y += n.dy;
-            // Bounce off the mask outline
-            if (!isInBrainMask(n.x, n.y)) {
-                n.dx *= -1;
-                n.dy *= -1;
-                n.x += n.dx * 2;
-                n.y += n.dy * 2;
-            }
+            // Bounce off the hero area edges
+            if (n.x < 0 || n.x > w) n.dx *= -1;
+            if (n.y < 0 || n.y > h) n.dy *= -1;
         }
         drawNetwork();
         requestAnimationFrame(animate);
     }
     function resetAndStart() {
-        if (!maskData) {
-            setTimeout(resetAndStart, 100);
-            return;
-        }
         initNetwork();
         drawNetwork();
         animate();
     }
-    maskImg.onload = () => {
-        updateMaskCanvas();
-        resetAndStart();
-    };
-    window.addEventListener('resize', () => {
-        updateMaskCanvas();
-        resetAndStart();
-    });
+    window.addEventListener('resize', resetAndStart);
+    resetAndStart();
     </script>
 </body>
 </html>
