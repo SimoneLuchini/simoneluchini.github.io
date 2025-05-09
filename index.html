@@ -31,11 +31,6 @@
             max-width: 700px;
             margin: 4rem auto 0 auto;
             padding: 2.5rem 2rem 2.5rem 2rem;
-            background: rgba(255,255,255,0.18);
-            border-radius: 2rem;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             text-align: center;
         }
         header {
@@ -135,7 +130,7 @@
         </div>
     </div>
     <script>
-    // Brain-shaped network animation
+    // Brain-shaped network animation with SVG outline and bouncing nodes inside
     const svg = document.querySelector('.background-network');
     function resizeSVG() {
         svg.setAttribute('width', window.innerWidth);
@@ -144,58 +139,88 @@
     resizeSVG();
     window.addEventListener('resize', resizeSVG);
 
-    // Brain shape parametric outline (simplified, mirrored for both hemispheres)
-    function brainOutline(t, w, h) {
-        // t in [0, 1], w = width, h = height
-        // Left hemisphere
-        if (t < 0.5) {
-            const a = Math.PI * (1 + t); // from pi to 2pi
-            return [
-                w * (0.5 - 0.22 * Math.cos(a) + 0.04 * Math.sin(3 * a)),
-                h * (0.5 + 0.38 * Math.sin(a) + 0.08 * Math.cos(4 * a))
-            ];
-        } else {
-            // Right hemisphere
-            const a = Math.PI * (t - 0.5); // from 0 to pi
-            return [
-                w * (0.5 + 0.22 * Math.cos(a) - 0.04 * Math.sin(3 * a)),
-                h * (0.5 + 0.38 * Math.sin(a) + 0.08 * Math.cos(4 * a))
-            ];
-        }
+    // Brain outline path (SVG path string, normalized to [0,1] and scaled)
+    function getBrainPath(w, h) {
+        // A rough brain outline path (hand-tuned for aesthetics)
+        // You can further refine this SVG path for more detail
+        return `M ${w*0.32},${h*0.25}
+            Q ${w*0.18},${h*0.35} ${w*0.22},${h*0.5}
+            Q ${w*0.13},${h*0.7} ${w*0.32},${h*0.75}
+            Q ${w*0.28},${h*0.95} ${w*0.5},${h*0.92}
+            Q ${w*0.72},${h*0.95} ${w*0.68},${h*0.75}
+            Q ${w*0.87},${h*0.7} ${w*0.78},${h*0.5}
+            Q ${w*0.82},${h*0.35} ${w*0.68},${h*0.25}
+            Q ${w*0.5},${h*0.1} ${w*0.32},${h*0.25} Z`;
     }
 
+    // Helper: point-in-path using SVG
+    function isInBrain(x, y, path) {
+        if (!window._brainPath2D) window._brainPath2D = {};
+        const key = path;
+        if (!window._brainPath2D[key]) {
+            window._brainPath2D[key] = new Path2D(path);
+        }
+        return svg.getContext('2d').isPointInPath(window._brainPath2D[key], x, y);
+    }
+
+    // Network parameters
     const NODES = 70;
     const LINES = 110;
-    const nodes = [];
-    const lines = [];
-    const w = () => window.innerWidth;
-    const h = () => window.innerHeight;
-    // Place nodes along a brain outline, with jitter
-    for (let i = 0; i < NODES; i++) {
-        const t = i / NODES;
-        const [bx, by] = brainOutline(t, w(), h());
-        nodes.push({
-            x: bx + (Math.random() - 0.5) * 32,
-            y: by + (Math.random() - 0.5) * 32,
-            r: 2.2 + Math.random() * 1.5,
-            dx: (Math.random() - 0.5) * 0.7,
-            dy: (Math.random() - 0.5) * 0.7
-        });
-    }
-    // Create random lines between nodes (favor nearby nodes)
-    while (lines.length < LINES) {
-        let a = Math.floor(Math.random() * NODES);
-        let b = Math.floor(Math.random() * NODES);
-        if (a !== b && !lines.some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a))) {
-            const dist = Math.hypot(nodes[a].x - nodes[b].x, nodes[a].y - nodes[b].y);
-            if (dist < Math.min(w(), h()) / 2.2) {
-                lines.push({a, b});
+    let nodes = [];
+    let lines = [];
+    function initNetwork() {
+        nodes = [];
+        lines = [];
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const path = getBrainPath(w, h);
+        // Place nodes randomly inside the brain shape
+        let tries = 0;
+        while (nodes.length < NODES && tries < 5000) {
+            const x = w * (0.15 + 0.7 * Math.random());
+            const y = h * (0.12 + 0.8 * Math.random());
+            // Use canvas 2D context for point-in-path
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.beginPath();
+            const p = new Path2D(path);
+            ctx.stroke(p);
+            if (ctx.isPointInPath(p, x, y)) {
+                nodes.push({
+                    x, y,
+                    r: 2.2 + Math.random() * 1.5,
+                    dx: (Math.random() - 0.5) * 0.7,
+                    dy: (Math.random() - 0.5) * 0.7
+                });
+            }
+            tries++;
+        }
+        // Create random lines between nodes (favor nearby nodes)
+        while (lines.length < LINES) {
+            let a = Math.floor(Math.random() * nodes.length);
+            let b = Math.floor(Math.random() * nodes.length);
+            if (a !== b && !lines.some(l => (l.a === a && l.b === b) || (l.a === b && l.b === a))) {
+                const dist = Math.hypot(nodes[a].x - nodes[b].x, nodes[a].y - nodes[b].y);
+                if (dist < Math.min(w, h) / 2.2) {
+                    lines.push({a, b});
+                }
             }
         }
     }
-    // Draw function
     function drawNetwork() {
         svg.innerHTML = '';
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        // Draw brain outline
+        const brainPath = getBrainPath(w, h);
+        const outline = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        outline.setAttribute('d', brainPath);
+        outline.setAttribute('fill', 'none');
+        outline.setAttribute('stroke', '#fff');
+        outline.setAttribute('stroke-width', '2.5');
+        outline.setAttribute('opacity', '0.7');
+        svg.appendChild(outline);
         // Draw lines
         for (const l of lines) {
             const n1 = nodes[l.a], n2 = nodes[l.b];
@@ -204,28 +229,9 @@
             line.setAttribute('y1', n1.y);
             line.setAttribute('x2', n2.x);
             line.setAttribute('y2', n2.y);
-            // Gradient color based on y position
-            const grad = svg.ownerDocument.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-            const gradId = `grad${l.a}_${l.b}`;
-            grad.setAttribute('id', gradId);
-            grad.setAttribute('x1', '0%');
-            grad.setAttribute('y1', '0%');
-            grad.setAttribute('x2', '0%');
-            grad.setAttribute('y2', '100%');
-            const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-            stop1.setAttribute('offset', '0%');
-            stop1.setAttribute('stop-color', '#1bffff');
-            stop1.setAttribute('stop-opacity', '0.22');
-            const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-            stop2.setAttribute('offset', '100%');
-            stop2.setAttribute('stop-color', '#2e3192');
-            stop2.setAttribute('stop-opacity', '0.22');
-            grad.appendChild(stop1);
-            grad.appendChild(stop2);
-            svg.appendChild(grad);
-            line.setAttribute('stroke', `url(#${gradId})`);
+            line.setAttribute('stroke', '#1bffff');
             line.setAttribute('stroke-width', '1.1');
-            line.setAttribute('opacity', '0.7');
+            line.setAttribute('opacity', '0.5');
             svg.appendChild(line);
         }
         // Draw nodes
@@ -234,44 +240,46 @@
             circle.setAttribute('cx', n.x);
             circle.setAttribute('cy', n.y);
             circle.setAttribute('r', n.r);
-            circle.setAttribute('fill', 'url(#nodeGrad)');
+            circle.setAttribute('fill', '#fff');
             circle.setAttribute('stroke', '#1bffff');
             circle.setAttribute('stroke-width', '0.7');
             circle.setAttribute('opacity', '0.85');
             svg.appendChild(circle);
         }
-        // Add a radial gradient for nodes
-        if (!svg.querySelector('#nodeGrad')) {
-            const nodeGrad = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
-            nodeGrad.setAttribute('id', 'nodeGrad');
-            nodeGrad.setAttribute('cx', '50%');
-            nodeGrad.setAttribute('cy', '50%');
-            nodeGrad.setAttribute('r', '50%');
-            const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-            stop1.setAttribute('offset', '0%');
-            stop1.setAttribute('stop-color', '#fff');
-            stop1.setAttribute('stop-opacity', '1');
-            const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-            stop2.setAttribute('offset', '100%');
-            stop2.setAttribute('stop-color', '#1bffff');
-            stop2.setAttribute('stop-opacity', '0.5');
-            nodeGrad.appendChild(stop1);
-            nodeGrad.appendChild(stop2);
-            svg.appendChild(nodeGrad);
-        }
     }
-    // Animate
     function animate() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const brainPath = getBrainPath(w, h);
+        // Use canvas 2D context for point-in-path
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.beginPath();
+        const p = new Path2D(brainPath);
+        ctx.stroke(p);
         for (const n of nodes) {
             n.x += n.dx;
             n.y += n.dy;
-            if (n.x < 0 || n.x > w()) n.dx *= -1;
-            if (n.y < 0 || n.y > h()) n.dy *= -1;
+            // Bounce off the brain outline
+            if (!ctx.isPointInPath(p, n.x, n.y)) {
+                // Reverse direction and move back inside
+                n.dx *= -1;
+                n.dy *= -1;
+                n.x += n.dx * 2;
+                n.y += n.dy * 2;
+            }
         }
         drawNetwork();
         requestAnimationFrame(animate);
     }
-    animate();
+    function resetAndStart() {
+        initNetwork();
+        drawNetwork();
+        animate();
+    }
+    window.addEventListener('resize', resetAndStart);
+    resetAndStart();
     </script>
 </body>
 </html>
