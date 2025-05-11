@@ -228,36 +228,38 @@
                 width: 100%;
                 padding: 0.5rem 0.1rem 0 0.1rem;
                 box-sizing: border-box;
-                transform: scale(0.65);
-                transform-origin: top left;
-                min-width: 600px;
+                transform: scale(1);
+                min-width: 0;
             }
             .profile-header-row {
-                flex-direction: row;
-                align-items: flex-start;
+                flex-direction: column;
+                align-items: stretch;
                 width: 100%;
                 margin-bottom: 1rem;
             }
             .profile-header {
-                flex-direction: row;
+                flex-direction: column;
                 align-items: center;
                 gap: 0.7rem;
                 margin-top: 0.7rem;
-                width: auto;
+                width: 100%;
             }
             .profile-photo {
                 width: 90px;
                 max-width: 60vw;
             }
             .network-box {
-                width: 200px;
-                height: 150px;
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
+                height: 120px;
+                min-height: 60px;
                 margin-top: 0.7rem;
                 box-sizing: border-box;
             }
             #network-canvas {
                 width: 100% !important;
-                height: 100% !important;
+                height: 120px !important;
                 max-width: 100% !important;
                 display: block;
             }
@@ -274,14 +276,14 @@
                 box-sizing: border-box;
             }
             .study-section {
-                flex-direction: row !important;
-                align-items: flex-start !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
                 width: 100%;
                 box-sizing: border-box;
             }
             .study-section img {
-                width: 220px !important;
-                max-width: 40vw !important;
+                width: 100% !important;
+                max-width: 100% !important;
                 height: auto !important;
             }
             body {
