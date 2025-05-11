@@ -205,81 +205,95 @@
                 margin-bottom: 1.1rem;
             }
         }
+        .narrow-container {
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .wide-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
     <div class="main-container">
-        <div class="profile-header-row">
-            <div class="profile-header">
-                <img src="SimoneLuchini-3.jpg" alt="Simone Luchini" class="profile-photo" />
-                <div class="profile-main">
-                    <div class="network-title">
-                        <span class="name">Simone <span class="surname">Luchini</span></span>
-                        <div class="subtitle">PhD Student</div>
-                        <div class="underline"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="network-box">
-                <canvas id="network-canvas"></canvas>
-            </div>
-        </div>
-        <div class="profile-details-row">
-            <div class="profile-description">
-                <div class="profile-socials">
-                    <b>Email</b>: combine skl5875 and @psu.edu<br>
-                    <b>Scholar</b>: <a href="https://scholar.google.it/citations?user=EjaB5A0AAAAJ&hl=en&oi=ao" target="_blank" rel="noopener">Simone A. Luchini</a><br>
-                    <b>ORCID</b>: <a href="https://orcid.org/0000-0001-8027-8528" target="_blank" rel="noopener">0000-0001-8027-8528</a><br>
-                    <b>OSF</b>: <a href="https://osf.io/pczu2/" target="_blank" rel="noopener">Simone A Luchini</a><br>
-                    <b>Twitter/X</b>: <a href="https://x.com/Simone_Luchini" target="_blank" rel="noopener">@Simone_Luchini</a><br>
-                    <b>Bluesky</b>: <a href="https://bsky.app/profile/simoneluchini.bsky.social" target="_blank" rel="noopener">@simoneluchini.bsky.social</a><br>
-                </div>
-                Hi, I am Simone! I study creativity in humans and artificial systems. My work intersects cognitive psychology, neuroscience, and artificial intelligence. I am currently a PhD student at <a href="https://www.psu.edu/" target="_blank" rel="noopener">Penn State University</a>, working with <a href="https://beatylab.la.psu.edu/" target="_blank" rel="noopener">Dr. Roger Beaty</a>. I completed my BSc at <a href="https://www.westminster.ac.uk/" target="_blank" rel="noopener">The University of Westminster</a> and my MSc at <a href="https://en.unimib.it/" target="_blank" rel="noopener">The University of Milano-Bicocca</a>. I have also been a visiting student at the labs of <a href="https://sites.google.com/site/emmavolle/home" target="_blank" rel="noopener">Dr. Emmanuelle Volle</a> at the <a href="https://parisbraininstitute.org/" target="_blank" rel="noopener">Paris Brain Institute</a>, and <a href="https://bchen.net/" target="_blank" rel="noopener">Dr. Bodong Chen</a> at the <a href="https://www.upenn.edu/" target="_blank" rel="noopener">University of Pennsylvania</a>.
-            </div>
-        </div>
-        <section class="hero-section">
-            <div class="hero-underline"></div>
-            <div class="hero-text">Learn About My Research</div>
-            <div class="profile-description">
-                My research fits into three related categories. (1) Understanding the neural (brain) systems that support creative thinking, leveraging neuroimaging (e.g., fMRI, fNIRS) and neuromodulation techniques (e.g., neurofeedback, tDCS, tACS). (2) Defining the cognitive systems that underlie creativity, employing network science, factor analytic techniques, longitudinal analyses, and more. (3) Exploring how  representations and creative behaviors of humans compare to those of AI (primarily Large Language Models), to develop artificial systems capable of human-like creativity. You can can read more about some selected projects below:
-            </div>
-            <div class="study-section" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.7rem; margin-top: 2.2rem;">
-                <div style="width: 100%; margin: 0;">
-                    <div style="font-size: 1.05rem; color: #888; margin-bottom: 0.2rem; font-weight: 500;">April 2025</div>
-                    <div style="font-size: 1.18rem; color: #222; font-family: 'Inter', Arial, sans-serif; font-weight: bold; line-height: 1.3; margin-bottom: 0.5rem;">Enhancing Creativity with Covert Neurofeedback: Causal Evidence for Default-Executive Network Coupling in Creative Thinking</div>
-                </div>
-                <div style="display: flex; align-items: flex-start; gap: 1.5rem; width: 100%; margin: 0;">
-                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                        <img src="FigureNFB.png" alt="Figure NFB" style="width: 480px; max-width: 60vw; border-radius: 0.7rem; box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);" />
-                        <div style="font-size: 0.98rem; color: #888; margin-top: 0.5rem; margin-bottom: 0.5rem; max-width: 480px;">
-                            Luchini, S. A., Zhang, X., White, R. T., Lührs, M., Ramot, M., & Beaty, R. E. (2025). Enhancing creativity with covert neurofeedback: causal evidence for default-executive network coupling in creative thinking. <i>Cerebral Cortex, 35(4)</i>, bhaf065.
+        <div class="narrow-container">
+            <div class="profile-header-row">
+                <div class="profile-header">
+                    <img src="SimoneLuchini-3.jpg" alt="Simone Luchini" class="profile-photo" />
+                    <div class="profile-main">
+                        <div class="network-title">
+                            <span class="name">Simone <span class="surname">Luchini</span></span>
+                            <div class="subtitle">PhD Student</div>
+                            <div class="underline"></div>
                         </div>
                     </div>
-                    <div style="flex: 1 1 0; min-width: 0; font-size: 1.13rem; color: #222; font-family: 'Inter', Arial, sans-serif; line-height: 1.6;">
-                        Correlational evidence has linked creativity to coupling between the Default Mode Network (DMN) and Executive Control Network (ECN). In this study, we leveraged covert neurofeedback to endogenously modify functional connectivity between DMN and ECN without the participants' knowledge. In a default-executive neurofeedback condition (n=15), we entrained coupling between the medial prefrontal cortex (mPFC) and the dorsolateral prefrontal cortex, hubs of the DMN and ECN respectively. We compared this with a default-motor condition (n=15), entraining coupling between mPFC and supplementary motor area. Approximately 24 hours later, default-executive neurofeedback led to increased coupling between DMN and ECN during a creative thinking task (generating creative object uses), extending to broader DMN regions. Behaviorally, we observed a double dissociation: the default-executive condition increased idea originality, while the default-motor condition improved go/no-go reaction times. We thus provide the first evidence that DMN-ECN coupling causally enhances creative performance.
-                        <br><a href="https://doi.org/10.1093/cercor/bhaf065" style="display: inline-block; margin-top: 0.5rem; color: #4a7cff; text-decoration: underline;">Read more</a>
-                    </div>
+                </div>
+                <div class="network-box">
+                    <canvas id="network-canvas"></canvas>
                 </div>
             </div>
-            <div class="study-section" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.7rem; margin-top: 2.2rem;">
-                <div style="width: 100%; margin: 0;">
-                    <div style="font-size: 1.05rem; color: #888; margin-bottom: 0.2rem; font-weight: 500;">2023</div>
-                    <div style="font-size: 1.18rem; color: #222; font-family: 'Inter', Arial, sans-serif; font-weight: bold; line-height: 1.3; margin-bottom: 0.5rem;">Convergent thinking and insight problem solving relate to semantic memory network structure</div>
+            <div class="profile-details-row">
+                <div class="profile-description">
+                    <div class="profile-socials">
+                        <b>Email</b>: combine skl5875 and @psu.edu<br>
+                        <b>Scholar</b>: <a href="https://scholar.google.it/citations?user=EjaB5A0AAAAJ&hl=en&oi=ao" target="_blank" rel="noopener">Simone A. Luchini</a><br>
+                        <b>ORCID</b>: <a href="https://orcid.org/0000-0001-8027-8528" target="_blank" rel="noopener">0000-0001-8027-8528</a><br>
+                        <b>OSF</b>: <a href="https://osf.io/pczu2/" target="_blank" rel="noopener">Simone A Luchini</a><br>
+                        <b>Twitter/X</b>: <a href="https://x.com/Simone_Luchini" target="_blank" rel="noopener">@Simone_Luchini</a><br>
+                        <b>Bluesky</b>: <a href="https://bsky.app/profile/simoneluchini.bsky.social" target="_blank" rel="noopener">@simoneluchini.bsky.social</a><br>
+                    </div>
+                    Hi, I am Simone! I study creativity in humans and artificial systems. My work intersects cognitive psychology, neuroscience, and artificial intelligence. I am currently a PhD student at <a href="https://www.psu.edu/" target="_blank" rel="noopener">Penn State University</a>, working with <a href="https://beatylab.la.psu.edu/" target="_blank" rel="noopener">Dr. Roger Beaty</a>. I completed my BSc at <a href="https://www.westminster.ac.uk/" target="_blank" rel="noopener">The University of Westminster</a> and my MSc at <a href="https://en.unimib.it/" target="_blank" rel="noopener">The University of Milano-Bicocca</a>. I have also been a visiting student at the labs of <a href="https://sites.google.com/site/emmavolle/home" target="_blank" rel="noopener">Dr. Emmanuelle Volle</a> at the <a href="https://parisbraininstitute.org/" target="_blank" rel="noopener">Paris Brain Institute</a>, and <a href="https://bchen.net/" target="_blank" rel="noopener">Dr. Bodong Chen</a> at the <a href="https://www.upenn.edu/" target="_blank" rel="noopener">University of Pennsylvania</a>.
                 </div>
-                <div style="display: flex; align-items: flex-start; gap: 1.5rem; width: 100%; margin: 0;">
-                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                        <img src="FigureInsight.png" alt="Figure Insight" style="width: 480px; max-width: 60vw; border-radius: 0.7rem; box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);" />
-                        <div style="font-size: 0.98rem; color: #888; margin-top: 0.5rem; margin-bottom: 0.5rem; max-width: 480px;">
-                            Luchini, S., Kenett, Y. N., Zeitlen, D. C., Christensen, A. P., Ellis, D. M., Brewer, G. A., & Beaty, R. E. (2023). Convergent thinking and insight problem solving relate to semantic memory network structure. <i>Thinking Skills and Creativity, 48</i>, 101277.
+            </div>
+        </div>
+        <div class="wide-container">
+            <section class="hero-section">
+                <div class="hero-underline"></div>
+                <div class="hero-text">Learn About My Research</div>
+                <div class="profile-description">
+                    My research fits into three related categories. (1) Understanding the neural (brain) systems that support creative thinking, leveraging neuroimaging (e.g., fMRI, fNIRS) and neuromodulation techniques (e.g., neurofeedback, tDCS, tACS). (2) Defining the cognitive systems that underlie creativity, employing network science, factor analytic techniques, longitudinal analyses, and more. (3) Exploring how  representations and creative behaviors of humans compare to those of AI (primarily Large Language Models), to develop artificial systems capable of human-like creativity. You can can read more about some selected projects below:
+                </div>
+                <div class="study-section" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.7rem; margin-top: 2.2rem;">
+                    <div style="width: 100%; margin: 0;">
+                        <div style="font-size: 1.05rem; color: #888; margin-bottom: 0.2rem; font-weight: 500;">April 2025</div>
+                        <div style="font-size: 1.18rem; color: #222; font-family: 'Inter', Arial, sans-serif; font-weight: bold; line-height: 1.3; margin-bottom: 0.5rem;">Enhancing Creativity with Covert Neurofeedback: Causal Evidence for Default-Executive Network Coupling in Creative Thinking</div>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 1.5rem; width: 100%; margin: 0;">
+                        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                            <img src="FigureNFB.png" alt="Figure NFB" style="width: 480px; max-width: 60vw; border-radius: 0.7rem; box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);" />
+                            <div style="font-size: 0.98rem; color: #888; margin-top: 0.5rem; margin-bottom: 0.5rem; max-width: 480px;">
+                                Luchini, S. A., Zhang, X., White, R. T., Lührs, M., Ramot, M., & Beaty, R. E. (2025). Enhancing creativity with covert neurofeedback: causal evidence for default-executive network coupling in creative thinking. <i>Cerebral Cortex, 35(4)</i>, bhaf065.
+                            </div>
+                        </div>
+                        <div style="flex: 1 1 0; min-width: 0; font-size: 1.13rem; color: #222; font-family: 'Inter', Arial, sans-serif; line-height: 1.6;">
+                            Correlational evidence has linked creativity to coupling between the Default Mode Network (DMN) and Executive Control Network (ECN). In this study, we leveraged covert neurofeedback to endogenously modify functional connectivity between DMN and ECN without the participants' knowledge. In a default-executive neurofeedback condition (n=15), we entrained coupling between the medial prefrontal cortex (mPFC) and the dorsolateral prefrontal cortex, hubs of the DMN and ECN respectively. We compared this with a default-motor condition (n=15), entraining coupling between mPFC and supplementary motor area. Approximately 24 hours later, default-executive neurofeedback led to increased coupling between DMN and ECN during a creative thinking task (generating creative object uses), extending to broader DMN regions. Behaviorally, we observed a double dissociation: the default-executive condition increased idea originality, while the default-motor condition improved go/no-go reaction times. We thus provide the first evidence that DMN-ECN coupling causally enhances creative performance.
+                            <br><a href="https://doi.org/10.1093/cercor/bhaf065" style="display: inline-block; margin-top: 0.5rem; color: #4a7cff; text-decoration: underline;">Read more</a>
                         </div>
                     </div>
-                    <div style="flex: 1 1 0; min-width: 0; font-size: 1.13rem; color: #222; font-family: 'Inter', Arial, sans-serif; line-height: 1.6;">
-                        The associative theory of creativity has long held that creative thinking involves connecting remote concepts in semantic memory. Network science tools have recently been applied to map the organization of concepts in semantic memory, and to study the link between semantic memory and creativity. Yet such work has largely overlooked the domain of convergent thinking, despite the theoretical importance of semantic memory networks for facilitating associative processes relevant for convergent problem solving (e.g., spreading activation). Convergent thinking problems, such as the Compound Remote Associates (CRA) test, can be solved with insight (the sudden "aha" experience) or analysis (deliberately and incrementally working towards the solution). In a sample of 477 participants, we adopted network science methods to compare semantic memory structure across two grouping variables: 1) convergent thinking ability (i.e., CRA accuracy), and 2) the self-reported tendency to solve problems with insight or analysis. Semantic memory networks were constructed from a semantic fluency task, and problem solving style (insight or analysis) was determined from judgments provided during solving of CRAs. We found that, compared to the low-convergent thinking group, the high-convergent thinking group exhibited a more flexible and interconnected semantic network—with short paths and many connections between concepts. Moreover, participants who primarily solved problems with insight (compared to analysis) showed shorter average path distances between concepts, even after controlling for accuracy. Our results extend the literature on semantic memory and creativity, and suggest that the organization of semantic memory plays a key role in convergent thinking, including insight problem solving.
-                        <br><a href="https://doi.org/10.1016/j.tsc.2023.101277" style="display: inline-block; margin-top: 0.5rem; color: #4a7cff; text-decoration: underline;">Read more</a>
+                </div>
+                <div class="study-section" style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.7rem; margin-top: 2.2rem;">
+                    <div style="width: 100%; margin: 0;">
+                        <div style="font-size: 1.05rem; color: #888; margin-bottom: 0.2rem; font-weight: 500;">2023</div>
+                        <div style="font-size: 1.18rem; color: #222; font-family: 'Inter', Arial, sans-serif; font-weight: bold; line-height: 1.3; margin-bottom: 0.5rem;">Convergent thinking and insight problem solving relate to semantic memory network structure</div>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 1.5rem; width: 100%; margin: 0;">
+                        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                            <img src="FigureInsight.png" alt="Figure Insight" style="width: 480px; max-width: 60vw; border-radius: 0.7rem; box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);" />
+                            <div style="font-size: 0.98rem; color: #888; margin-top: 0.5rem; margin-bottom: 0.5rem; max-width: 480px;">
+                                Luchini, S., Kenett, Y. N., Zeitlen, D. C., Christensen, A. P., Ellis, D. M., Brewer, G. A., & Beaty, R. E. (2023). Convergent thinking and insight problem solving relate to semantic memory network structure. <i>Thinking Skills and Creativity, 48</i>, 101277.
+                            </div>
+                        </div>
+                        <div style="flex: 1 1 0; min-width: 0; font-size: 1.13rem; color: #222; font-family: 'Inter', Arial, sans-serif; line-height: 1.6;">
+                            The associative theory of creativity has long held that creative thinking involves connecting remote concepts in semantic memory. Network science tools have recently been applied to map the organization of concepts in semantic memory, and to study the link between semantic memory and creativity. Yet such work has largely overlooked the domain of convergent thinking, despite the theoretical importance of semantic memory networks for facilitating associative processes relevant for convergent problem solving (e.g., spreading activation). Convergent thinking problems, such as the Compound Remote Associates (CRA) test, can be solved with insight (the sudden "aha" experience) or analysis (deliberately and incrementally working towards the solution). In a sample of 477 participants, we adopted network science methods to compare semantic memory structure across two grouping variables: 1) convergent thinking ability (i.e., CRA accuracy), and 2) the self-reported tendency to solve problems with insight or analysis. Semantic memory networks were constructed from a semantic fluency task, and problem solving style (insight or analysis) was determined from judgments provided during solving of CRAs. We found that, compared to the low-convergent thinking group, the high-convergent thinking group exhibited a more flexible and interconnected semantic network—with short paths and many connections between concepts. Moreover, participants who primarily solved problems with insight (compared to analysis) showed shorter average path distances between concepts, even after controlling for accuracy. Our results extend the literature on semantic memory and creativity, and suggest that the organization of semantic memory plays a key role in convergent thinking, including insight problem solving.
+                            <br><a href="https://doi.org/10.1016/j.tsc.2023.101277" style="display: inline-block; margin-top: 0.5rem; color: #4a7cff; text-decoration: underline;">Read more</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
     </div>
     <script>
     // --- Pretty network animation: dots and lines in a box, with collisions ---
