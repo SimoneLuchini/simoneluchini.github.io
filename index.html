@@ -179,6 +179,12 @@
             max-width: none;
             pointer-events: none;
         }
+        .network-static {
+            display: none;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
         @media (max-width: 900px) {
             .main-container { padding: 1.2rem 0.7rem 0 0.7rem; }
             .profile-header-row { flex-direction: column; align-items: stretch; }
@@ -302,6 +308,7 @@
                 </div>
                 <div class="network-box">
                     <canvas id="network-canvas"></canvas>
+                    <img src="network-static.png" alt="Network Visualization" class="network-static" style="display: none; width: 100%; height: 100%; object-fit: contain;" />
                 </div>
             </div>
             <div class="profile-details-row">
@@ -394,19 +401,27 @@
     function setResponsiveParams() {
         const width = window.innerWidth;
         if (width < 600) {
-            NODES = 7;
-            LINE_DIST = 70;
-        } else if (width < 900) {
-            NODES = 10;
-            LINE_DIST = 90;
+            // On mobile, show static image instead of canvas
+            canvas.style.display = 'none';
+            document.querySelector('.network-static').style.display = 'block';
+            return false;
         } else {
-            NODES = 14;
-            LINE_DIST = 120;
+            // On desktop, show canvas
+            canvas.style.display = 'block';
+            document.querySelector('.network-static').style.display = 'none';
+            if (width < 900) {
+                NODES = 10;
+                LINE_DIST = 90;
+            } else {
+                NODES = 14;
+                LINE_DIST = 120;
+            }
+            return true;
         }
     }
 
     function resizeCanvas() {
-        setResponsiveParams();
+        if (!setResponsiveParams()) return; // Exit if on mobile
         const parent = canvas.parentElement;
         const rect = parent.getBoundingClientRect();
         // Use devicePixelRatio for crispness
@@ -424,6 +439,7 @@
     }
 
     function initNetwork() {
+        if (!setResponsiveParams()) return; // Exit if on mobile
         nodes = [];
         for (let i = 0; i < NODES; i++) {
             let r = 5 + Math.random() * 2; // 5 to 7
@@ -442,6 +458,7 @@
     }
 
     function drawNetwork() {
+        if (!setResponsiveParams()) return; // Exit if on mobile
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         // Draw lines only between close nodes
         ctx.save();
@@ -478,6 +495,7 @@
     }
 
     function handleCollisions() {
+        if (!setResponsiveParams()) return; // Exit if on mobile
         // Dot-to-dot collisions (elastic)
         for (let i = 0; i < nodes.length; i++) {
             for (let j = i + 1; j < nodes.length; j++) {
@@ -512,6 +530,7 @@
     }
 
     function animate() {
+        if (!setResponsiveParams()) return; // Exit if on mobile
         // Don't animate if canvas is too small
         if (box.w < 60 || box.h < 60) return;
         for (const n of nodes) {
