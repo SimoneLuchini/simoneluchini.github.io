@@ -298,19 +298,41 @@
     // --- Pretty network animation: dots and lines in a box, with collisions ---
     const canvas = document.getElementById('network-canvas');
     const ctx = canvas.getContext('2d');
-    const NODES = 14;
+    let NODES = 14;
+    let LINE_DIST = 120;
     let nodes = [];
     let box = {x: 20, y: 20, w: 0, h: 0};
 
+    function setResponsiveParams() {
+        const width = window.innerWidth;
+        if (width < 600) {
+            NODES = 7;
+            LINE_DIST = 70;
+        } else if (width < 900) {
+            NODES = 10;
+            LINE_DIST = 90;
+        } else {
+            NODES = 14;
+            LINE_DIST = 120;
+        }
+    }
+
     function resizeCanvas() {
+        setResponsiveParams();
         const parent = canvas.parentElement;
         const rect = parent.getBoundingClientRect();
-        canvas.width = Math.round(rect.width) + 40;
-        canvas.height = Math.round(rect.height) + 40;
+        // Use devicePixelRatio for crispness
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.round(rect.width * dpr) + 40 * dpr;
+        canvas.height = Math.round(rect.height * dpr) + 40 * dpr;
+        canvas.style.width = Math.round(rect.width + 40) + 'px';
+        canvas.style.height = Math.round(rect.height + 40) + 'px';
+        ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+        ctx.scale(dpr, dpr);
         box.x = 20;
         box.y = 20;
-        box.w = canvas.width - 40;
-        box.h = canvas.height - 40;
+        box.w = rect.width;
+        box.h = rect.height;
     }
 
     function initNetwork() {
@@ -341,7 +363,7 @@
             for (let j = i + 1; j < nodes.length; j++) {
                 const n1 = nodes[i], n2 = nodes[j];
                 const dist = Math.hypot(n1.x - n2.x, n1.y - n2.y);
-                if (dist < 120) { // Only draw if close
+                if (dist < LINE_DIST) { // Only draw if close
                     ctx.beginPath();
                     ctx.moveTo(n1.x, n1.y);
                     ctx.lineTo(n2.x, n2.y);
@@ -402,6 +424,8 @@
     }
 
     function animate() {
+        // Don't animate if canvas is too small
+        if (box.w < 60 || box.h < 60) return;
         for (const n of nodes) {
             n.x += n.dx;
             n.y += n.dy;
@@ -422,6 +446,7 @@
         drawNetwork();
     }
     window.addEventListener('resize', setup);
+    window.addEventListener('orientationchange', setup);
     setup();
     animate();
     </script>
