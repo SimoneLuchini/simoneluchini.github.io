@@ -228,36 +228,36 @@
                 width: 100%;
                 padding: 0.5rem 0.1rem 0 0.1rem;
                 box-sizing: border-box;
+                transform: scale(0.65);
+                transform-origin: top left;
+                min-width: 600px;
             }
             .profile-header-row {
-                flex-direction: column;
-                align-items: stretch;
+                flex-direction: row;
+                align-items: flex-start;
                 width: 100%;
                 margin-bottom: 1rem;
             }
             .profile-header {
-                flex-direction: column;
+                flex-direction: row;
                 align-items: center;
                 gap: 0.7rem;
                 margin-top: 0.7rem;
-                width: 100%;
+                width: auto;
             }
             .profile-photo {
                 width: 90px;
                 max-width: 60vw;
             }
             .network-box {
-                width: 100%;
-                max-width: 100%;
-                min-width: 0;
-                height: 120px;
-                min-height: 60px;
+                width: 200px;
+                height: 150px;
                 margin-top: 0.7rem;
                 box-sizing: border-box;
             }
             #network-canvas {
                 width: 100% !important;
-                height: 120px !important;
+                height: 100% !important;
                 max-width: 100% !important;
                 display: block;
             }
@@ -272,22 +272,20 @@
                 padding: 1.2rem 0.1rem 1rem 0.1rem;
                 width: 100%;
                 box-sizing: border-box;
-                overflow-x: auto;
             }
             .study-section {
                 flex-direction: row !important;
                 align-items: flex-start !important;
-                transform: scale(0.65);
-                transform-origin: top left;
-                width: 100vw;
-                min-width: 600px;
+                width: 100%;
                 box-sizing: border-box;
-                overflow-x: auto;
             }
             .study-section img {
                 width: 220px !important;
                 max-width: 40vw !important;
                 height: auto !important;
+            }
+            body {
+                overflow-x: auto;
             }
         }
     </style>
