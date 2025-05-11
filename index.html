@@ -286,6 +286,12 @@
                 max-width: 100% !important;
                 height: auto !important;
             }
+            /* Force inner flex containers to stack vertically on mobile, even if inline styles are present */
+            .study-section > div[style*="display: flex"] {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 0 !important;
+            }
             body {
                 overflow-x: auto;
             }
