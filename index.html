@@ -454,8 +454,8 @@
             </section>
             <div style="width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 3rem; margin-bottom: 3rem;">
                 <div class="hero-underline" style="width: 60vw; max-width: 700px; height: 5px; background: #e05a3c; border-radius: 2px; margin: 0 auto 2.2rem auto; display: block;"></div>
-                <div class="network-box" style="margin: 0 auto;">
-                    <canvas id="network-canvas"></canvas>
+                <div class="network-box" style="margin: 0 auto; width: 400px; height: 300px; position: relative;">
+                    <canvas id="network-canvas" style="position: absolute; top: -20px; left: -20px; width: calc(100% + 40px); height: calc(100% + 40px);"></canvas>
                     <img src="network-static.png" alt="Network Visualization" class="network-static" style="display: none; width: 100%; height: 100%; object-fit: contain;" />
                 </div>
             </div>
@@ -473,12 +473,10 @@
     function setResponsiveParams() {
         const width = window.innerWidth;
         if (width < 600) {
-            // On mobile, show static image instead of canvas
             canvas.style.display = 'none';
             document.querySelector('.network-static').style.display = 'block';
             return false;
         } else {
-            // On desktop, show canvas
             canvas.style.display = 'block';
             document.querySelector('.network-static').style.display = 'none';
             if (width < 900) {
@@ -493,28 +491,22 @@
     }
 
     function resizeCanvas() {
-        if (!setResponsiveParams()) return; // Exit if on mobile
+        if (!setResponsiveParams()) return;
         const parent = canvas.parentElement;
         const rect = parent.getBoundingClientRect();
-        // Use devicePixelRatio for crispness
         const dpr = window.devicePixelRatio || 1;
-        canvas.width = Math.round(rect.width * dpr) + 40 * dpr;
-        canvas.height = Math.round(rect.height * dpr) + 40 * dpr;
-        canvas.style.width = Math.round(rect.width + 40) + 'px';
-        canvas.style.height = Math.round(rect.height + 40) + 'px';
-        ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
+        canvas.width = Math.round((rect.width + 40) * dpr);
+        canvas.height = Math.round((rect.height + 40) * dpr);
         ctx.scale(dpr, dpr);
-        box.x = 20;
-        box.y = 20;
         box.w = rect.width;
         box.h = rect.height;
     }
 
     function initNetwork() {
-        if (!setResponsiveParams()) return; // Exit if on mobile
+        if (!setResponsiveParams()) return;
         nodes = [];
         for (let i = 0; i < NODES; i++) {
-            let r = 5 + Math.random() * 2; // 5 to 7
+            let r = 5 + Math.random() * 2;
             let x, y, tries = 0;
             do {
                 x = box.x + r + Math.random() * (box.w - 2 * r);
@@ -530,17 +522,16 @@
     }
 
     function drawNetwork() {
-        if (!setResponsiveParams()) return; // Exit if on mobile
+        if (!setResponsiveParams()) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // Draw lines only between close nodes
         ctx.save();
         ctx.globalAlpha = 0.18;
-        ctx.strokeStyle = 'rgba(90,120,255,0.7)'; // soft blue
+        ctx.strokeStyle = 'rgba(90,120,255,0.7)';
         for (let i = 0; i < nodes.length; i++) {
             for (let j = i + 1; j < nodes.length; j++) {
                 const n1 = nodes[i], n2 = nodes[j];
                 const dist = Math.hypot(n1.x - n2.x, n1.y - n2.y);
-                if (dist < LINE_DIST) { // Only draw if close
+                if (dist < LINE_DIST) {
                     ctx.beginPath();
                     ctx.moveTo(n1.x, n1.y);
                     ctx.lineTo(n2.x, n2.y);
@@ -549,7 +540,6 @@
             }
         }
         ctx.restore();
-        // Draw nodes (no shadow)
         for (const n of nodes) {
             ctx.save();
             ctx.beginPath();
@@ -563,12 +553,10 @@
             ctx.stroke();
             ctx.restore();
         }
-        ctx.globalAlpha = 1;
     }
 
     function handleCollisions() {
-        if (!setResponsiveParams()) return; // Exit if on mobile
-        // Dot-to-dot collisions (elastic)
+        if (!setResponsiveParams()) return;
         for (let i = 0; i < nodes.length; i++) {
             for (let j = i + 1; j < nodes.length; j++) {
                 const n1 = nodes[i], n2 = nodes[j];
@@ -577,7 +565,6 @@
                 const dist = Math.hypot(dx, dy);
                 const minDist = n1.r + n2.r;
                 if (dist < minDist) {
-                    // Overlap, push apart
                     const overlap = 0.5 * (minDist - dist + 0.1);
                     const nx = dx / (dist || 1);
                     const ny = dy / (dist || 1);
@@ -585,7 +572,6 @@
                     n1.y -= ny * overlap;
                     n2.x += nx * overlap;
                     n2.y += ny * overlap;
-                    // Elastic collision (swap velocities along the normal)
                     const dvx = n2.dx - n1.dx;
                     const dvy = n2.dy - n1.dy;
                     const dot = dvx * nx + dvy * ny;
@@ -602,13 +588,11 @@
     }
 
     function animate() {
-        if (!setResponsiveParams()) return; // Exit if on mobile
-        // Don't animate if canvas is too small
+        if (!setResponsiveParams()) return;
         if (box.w < 60 || box.h < 60) return;
         for (const n of nodes) {
             n.x += n.dx;
             n.y += n.dy;
-            // Bounce off box, keep circles fully visible
             if (n.x - n.r < box.x) { n.x = box.x + n.r; n.dx *= -1; }
             if (n.x + n.r > box.x + box.w) { n.x = box.x + box.w - n.r; n.dx *= -1; }
             if (n.y - n.r < box.y) { n.y = box.y + n.r; n.dy *= -1; }
@@ -624,6 +608,7 @@
         initNetwork();
         drawNetwork();
     }
+    
     window.addEventListener('resize', setup);
     window.addEventListener('orientationchange', setup);
     setup();
