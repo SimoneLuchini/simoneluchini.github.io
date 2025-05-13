@@ -555,15 +555,15 @@
         // Use devicePixelRatio for crispness
         const dpr = window.devicePixelRatio || 1;
         canvas.width = Math.round(rect.width * dpr) + 20 * dpr;
-        canvas.height = 80 * dpr;
+        canvas.height = 100 * dpr;
         canvas.style.width = Math.round(rect.width + 20) + 'px';
-        canvas.style.height = '80px';
+        canvas.style.height = '100px';
         ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
         ctx.scale(dpr, dpr);
         box.x = 10;
         box.y = 10;
         box.w = rect.width;
-        box.h = 60;
+        box.h = 80;
     }
 
     function initNetwork() {
