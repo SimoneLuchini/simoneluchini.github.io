@@ -29,7 +29,7 @@
             margin: 0 auto;
             padding: 2.5rem 2.5rem 0.5rem 2.5rem;
             box-sizing: border-box;
-            padding-top: 4rem;  /* Add space for fixed menu */
+            padding-top: 3rem;  /* Reduced padding for smaller banner */
         }
         .profile-header-row {
             display: flex;
@@ -299,43 +299,45 @@
             }
         }
         .menu-banner {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            padding: 0.8rem 2rem;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            padding: 0.5rem 2rem;
             z-index: 1000;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.03);
             display: flex;
             justify-content: center;
             gap: 2rem;
-            height: 3rem;
+            height: 2.2rem;
         }
         .menu-banner a {
             color: #222;
             text-decoration: none;
             font-size: 0.95rem;
-            padding: 0.3rem 0.7rem;
-            border-radius: 0.5rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.4rem;
             transition: all 0.2s;
             white-space: nowrap;
         }
         .menu-banner a:hover {
-            background: rgba(74, 124, 255, 0.1);
+            background: rgba(74, 124, 255, 0.08);
             color: #4a7cff;
         }
         @media (max-width: 900px) {
             .menu-banner {
-                padding: 0.6rem 1rem;
+                padding: 0.4rem 1rem;
                 gap: 1rem;
                 overflow-x: auto;
+                height: 2rem;
             }
             .menu-banner a {
-                font-size: 0.85rem;
-                padding: 0.25rem 0.5rem;
+                font-size: 0.9rem;
+                padding: 0.15rem 0.4rem;
             }
         }
         .section-heading {
