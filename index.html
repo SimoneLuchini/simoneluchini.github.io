@@ -172,7 +172,7 @@
         }
         #network-canvas {
             width: calc(100% + 40px);
-            height: calc(100% + 40px);
+            height: 130px;  /* Fixed height instead of calc */
             display: block;
             position: absolute;
             top: -20px;
@@ -555,15 +555,15 @@
         // Use devicePixelRatio for crispness
         const dpr = window.devicePixelRatio || 1;
         canvas.width = Math.round(rect.width * dpr) + 40 * dpr;
-        canvas.height = Math.round(rect.height * dpr) + 40 * dpr;
+        canvas.height = 130 * dpr;  // Fixed height
         canvas.style.width = Math.round(rect.width + 40) + 'px';
-        canvas.style.height = Math.round(rect.height + 40) + 'px';
+        canvas.style.height = '130px';  // Fixed height
         ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
         ctx.scale(dpr, dpr);
         box.x = 20;
         box.y = 20;
         box.w = rect.width;
-        box.h = rect.height;
+        box.h = 90;  // Match the network-box height
     }
 
     function initNetwork() {
