@@ -159,8 +159,8 @@
             width: 400px;
             max-width: 440px;
             min-width: 200px;
-            height: 90px;
-            min-height: 60px;
+            height: 120px;
+            min-height: 80px;
             background: transparent !important;
             border-radius: 2.2rem;
             box-shadow: none;
@@ -172,7 +172,7 @@
         }
         #network-canvas {
             width: calc(100% + 40px);
-            height: 130px;  /* Fixed height instead of calc */
+            height: 160px;
             display: block;
             position: absolute;
             top: -20px;
@@ -498,7 +498,7 @@
                     </div>
                 </div>
             </section>
-            <div style="width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 3rem; margin-bottom: 3rem;">
+            <div style="width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 3rem; margin-bottom: 1rem;">
                 <div class="hero-underline" style="width: 60vw; max-width: 700px; height: 5px; background: #e05a3c; border-radius: 2px; margin: 0 auto 2.2rem auto; display: block;"></div>
                 <div class="network-box" style="margin: 0 auto;">
                     <canvas id="network-canvas"></canvas>
@@ -555,15 +555,15 @@
         // Use devicePixelRatio for crispness
         const dpr = window.devicePixelRatio || 1;
         canvas.width = Math.round(rect.width * dpr) + 40 * dpr;
-        canvas.height = 130 * dpr;  // Fixed height
+        canvas.height = 160 * dpr;
         canvas.style.width = Math.round(rect.width + 40) + 'px';
-        canvas.style.height = '130px';  // Fixed height
+        canvas.style.height = '160px';
         ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
         ctx.scale(dpr, dpr);
         box.x = 20;
         box.y = 20;
         box.w = rect.width;
-        box.h = 90;  // Match the network-box height
+        box.h = 120;
     }
 
     function initNetwork() {
