@@ -522,7 +522,7 @@
     const canvas = document.getElementById('network-canvas');
     const ctx = canvas.getContext('2d');
     let NODES = 14;
-    let LINE_DIST = 120;
+    let LINE_DIST = 80;
     let nodes = [];
     let box = {x: 20, y: 20, w: 0, h: 0};
 
@@ -539,10 +539,10 @@
             document.querySelector('.network-static').style.display = 'none';
             if (width < 900) {
                 NODES = 10;
-                LINE_DIST = 90;
+                LINE_DIST = 60;
             } else {
                 NODES = 14;
-                LINE_DIST = 120;
+                LINE_DIST = 80;
             }
             return true;
         }
