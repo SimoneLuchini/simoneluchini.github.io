@@ -299,7 +299,7 @@
             }
         }
         .menu-banner {
-            position: sticky;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
@@ -347,13 +347,13 @@
     </style>
 </head>
 <body>
-    <div class="menu-banner" style="position: sticky; top: 0;">
+    <div class="menu-banner" style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000;">
         <a href="#about" onclick="scrollToSection('about'); return false;">About Me</a>
         <a href="#neural" onclick="scrollToSection('neural'); return false;">Creativity Neuroscience</a>
         <a href="#cognitive" onclick="scrollToSection('cognitive'); return false;">Creative Cognition</a>
         <a href="#ai" onclick="scrollToSection('ai'); return false;">Creativity and AI</a>
     </div>
-    <div class="main-container">
+    <div class="main-container" style="margin-top: 2.7rem;">
         <div class="wide-container">
             <div class="profile-header-row">
                 <div class="profile-header">
